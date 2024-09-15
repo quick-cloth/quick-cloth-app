@@ -1,0 +1,25 @@
+package org.example.quickclothapp.dataservice.intf;
+
+import org.example.quickclothapp.exception.DataServiceException;
+import org.example.quickclothapp.model.Role;
+import org.example.quickclothapp.model.TypeDocument;
+import org.example.quickclothapp.model.User;
+import org.example.quickclothapp.payload.request.BankEmployeeRequest;
+import org.example.quickclothapp.payload.request.FoundationEmployeeRequest;
+import org.example.quickclothapp.payload.request.WardropeEmployeeRequest;
+
+import java.util.UUID;
+
+public interface IUserDataService {
+    User findUserByUuid(UUID uuid) throws DataServiceException;
+    User findUserByDocumentNumber(String documentNumber) throws DataServiceException;
+    User findUserByUserName(String userName) throws DataServiceException;
+    User findUserByEmail(String email) throws DataServiceException;
+    User findUserByPhoneNumber(String phoneNumber) throws DataServiceException;
+    Role findRoleByName(String name) throws DataServiceException;
+    TypeDocument findTypeDocumentByUuid(UUID uuid) throws DataServiceException;
+    User saveUserClient(User newUser) throws DataServiceException;
+    User saveUserFoundationEmployee(FoundationEmployeeRequest fer) throws DataServiceException;
+    User saveUserBankEmployee(BankEmployeeRequest ber) throws DataServiceException;
+    User saveUserWardropeEmployee(WardropeEmployeeRequest wer) throws DataServiceException;
+}
