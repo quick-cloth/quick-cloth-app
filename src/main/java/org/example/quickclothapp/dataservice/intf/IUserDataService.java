@@ -8,6 +8,7 @@ import org.example.quickclothapp.payload.request.BankEmployeeRequest;
 import org.example.quickclothapp.payload.request.FoundationEmployeeRequest;
 import org.example.quickclothapp.payload.request.WardropeEmployeeRequest;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface IUserDataService {
@@ -22,4 +23,5 @@ public interface IUserDataService {
     User saveUserFoundationEmployee(FoundationEmployeeRequest fer) throws DataServiceException;
     User saveUserBankEmployee(BankEmployeeRequest ber) throws DataServiceException;
     User saveUserWardropeEmployee(WardropeEmployeeRequest wer) throws DataServiceException;
+    List<User> findAllUsersByRol(String name) throws DataServiceException;
 }

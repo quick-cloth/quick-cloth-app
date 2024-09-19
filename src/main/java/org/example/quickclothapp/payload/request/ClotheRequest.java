@@ -4,13 +4,12 @@ import lombok.*;
 
 import java.util.UUID;
 
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class SaleListRequest {
-    private Integer value;
+@Builder
+public class ClotheRequest {
     private UUID clotheUuid;
     private Integer quantity;
 }

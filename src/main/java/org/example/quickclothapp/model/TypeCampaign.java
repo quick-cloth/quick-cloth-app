@@ -5,18 +5,13 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.math.BigInteger;
 import java.util.UUID;
 
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-public class Inventory {
+public class TypeCampaign {
     private UUID uuid;
-    private Integer stock;
-    private Integer minimum_stock;
-    private Wardrope wardrope;
-    private Clothe clothe;
-    private BigInteger unit_price;
+    private String name;
 }

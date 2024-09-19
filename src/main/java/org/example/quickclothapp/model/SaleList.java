@@ -14,4 +14,5 @@ public class SaleList {
     private Integer value;
     private Sale sale;
     private Clothe clothe;
+    private Integer quantity;
 }

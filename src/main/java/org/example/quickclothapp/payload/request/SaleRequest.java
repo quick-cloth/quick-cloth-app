@@ -14,7 +14,6 @@ import java.util.UUID;
 @Builder
 public class SaleRequest {
     private BigInteger value;
-    private LocalDate saleDate;
     private UUID wardRopeUuid;
     private UUID userUuid;
     private List<SaleListRequest> saleList;

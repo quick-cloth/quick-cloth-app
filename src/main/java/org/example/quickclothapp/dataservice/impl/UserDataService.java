@@ -15,6 +15,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -196,6 +197,25 @@ public class UserDataService implements IUserDataService {
                     User.class);
 
             return responseEntity.getBody();
+        }
+        catch (HttpClientErrorException e){
+            throw new DataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
+        }
+    }
+
+    @Override
+    public List<User> findAllUsersByRol(String name) throws DataServiceException {
+        try {
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(apiServerUrl + "user/get_all/role")
+                    .queryParam("roleName", name);
+
+            ResponseEntity<User[]> responseEntity = restTemplate.exchange(
+                    builder.toUriString(),
+                    HttpMethod.GET,
+                    null,
+                    User[].class);
+
+            return List.of(responseEntity.getBody());
         }
         catch (HttpClientErrorException e){
             throw new DataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());

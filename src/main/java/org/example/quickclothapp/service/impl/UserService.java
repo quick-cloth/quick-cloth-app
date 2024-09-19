@@ -1,6 +1,8 @@
 package org.example.quickclothapp.service.impl;
 
+import org.example.quickclothapp.dataservice.intf.IClotheBankDataService;
 import org.example.quickclothapp.dataservice.intf.IUserDataService;
+import org.example.quickclothapp.dataservice.intf.IWardRopeDataService;
 import org.example.quickclothapp.exception.DataServiceException;
 import org.example.quickclothapp.model.*;
 import org.example.quickclothapp.payload.request.BankEmployeeRequest;
@@ -8,15 +10,15 @@ import org.example.quickclothapp.payload.request.FoundationEmployeeRequest;
 import org.example.quickclothapp.payload.request.UserRequest;
 import org.example.quickclothapp.payload.request.WardropeEmployeeRequest;
 import org.example.quickclothapp.payload.response.MessageResponse;
-import org.example.quickclothapp.service.intf.IClotheBankService;
+import org.example.quickclothapp.payload.response.UserResponse;
 import org.example.quickclothapp.service.intf.IFoundationService;
 import org.example.quickclothapp.service.intf.IUserService;
-import org.example.quickclothapp.service.intf.IWardRopeService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -24,8 +26,8 @@ public class UserService implements IUserService {
 
     private final IUserDataService userDataService;
     private final IFoundationService foundationService;
-    private final IClotheBankService clotheBankService;
-    private final IWardRopeService wardRopeService;
+    private final IClotheBankDataService clotheBankService;
+    private final IWardRopeDataService wardRopeService;
 
     @Value("${api-server-rol-client}")
     private String clientRol;
@@ -39,7 +41,7 @@ public class UserService implements IUserService {
     @Value("${api-server-rol-wardRope-employee}")
     private String wardRopeEmployeeRol;
 
-    public UserService(IUserDataService userDataService, IFoundationService foundationService, IClotheBankService clotheBankService, IWardRopeService wardRopeService) {
+    public UserService(IUserDataService userDataService, IFoundationService foundationService, IClotheBankDataService clotheBankService, IWardRopeDataService wardRopeService) {
         this.userDataService = userDataService;
         this.foundationService = foundationService;
         this.clotheBankService = clotheBankService;
@@ -52,8 +54,15 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public User findUserByDocumentNumber(String documentNumber) throws DataServiceException {
-        return userDataService.findUserByDocumentNumber(documentNumber);
+    public UserResponse findUserByDocumentNumber(String documentNumber) throws DataServiceException {
+        User user = userDataService.findUserByDocumentNumber(documentNumber);
+
+        return UserResponse.builder()
+                .uuid(user.getUuid())
+                .name(user.getName())
+                .lastName(user.getLast_name())
+                .email(user.getEmail())
+                .build();
     }
 
     @Override
@@ -149,7 +158,7 @@ public class UserService implements IUserService {
     @Override
     public MessageResponse saveUserWardrope(UserRequest user, UUID wardRopeUuid) throws DataServiceException {
         validateUserInsert(user);
-        Wardrope wardRope = wardRopeService.findWardRopeByUuid(String.valueOf(wardRopeUuid));
+        Wardrope wardRope = wardRopeService.findWardRopeByUuid(wardRopeUuid);
         Role role = userDataService.findRoleByName(wardRopeEmployeeRol);
         TypeDocument typeDocument = userDataService.findTypeDocumentByUuid(user.getTypeDocumentUuid());
 
@@ -176,6 +185,11 @@ public class UserService implements IUserService {
         userDataService.saveUserWardropeEmployee(wer);
 
         return new MessageResponse("User Wardrope created successfully", 200, newUser.getUuid());
+    }
+
+    @Override
+    public List<User> getAllClientsUsers() throws DataServiceException {
+        return userDataService.findAllUsersByRol(clientRol);
     }
 
     private void validateUserInsert(UserRequest userRequest) throws DataServiceException {

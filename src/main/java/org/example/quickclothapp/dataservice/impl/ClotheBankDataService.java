@@ -2,7 +2,9 @@ package org.example.quickclothapp.dataservice.impl;
 
 import org.example.quickclothapp.dataservice.intf.IClotheBankDataService;
 import org.example.quickclothapp.exception.DataServiceException;
+import org.example.quickclothapp.model.Campaign;
 import org.example.quickclothapp.model.ClotheBank;
+import org.example.quickclothapp.model.TypeCampaign;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -10,6 +12,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -51,6 +54,55 @@ public class ClotheBankDataService implements IClotheBankDataService {
                     .queryParam("uuid", uuid);
 
             return restTemplate.getForObject(builder.toUriString(), ClotheBank.class);
+        }
+        catch (HttpClientErrorException e){
+            throw new DataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
+        }
+    }
+
+
+    @Override
+    public Campaign saveCampaign(Campaign campaign) throws DataServiceException {
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+
+            HttpEntity<Campaign> request = new HttpEntity<>(campaign, headers);
+
+            ResponseEntity<Campaign> responseEntity = restTemplate.exchange(
+                    apiServerUrl + "clothe_bank/campaign/save",
+                    HttpMethod.POST,
+                    request,
+                    Campaign.class);
+
+            return responseEntity.getBody();
+
+        } catch (HttpClientErrorException e) {
+            throw new DataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
+        }
+    }
+
+    @Override
+    public TypeCampaign findTypeCampaignByUuid(UUID typeCampaignUuid) throws DataServiceException {
+        try {
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(apiServerUrl + "clothe_bank/type_campaign/get")
+                    .queryParam("uuid", typeCampaignUuid);
+
+            return restTemplate.getForObject(builder.toUriString(), TypeCampaign.class);
+        } catch (HttpClientErrorException e) {
+            throw new DataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
+        }
+    }
+
+    @Override
+    public List<Campaign> findCampaignsByClotheBankUuid(UUID uuid) throws DataServiceException {
+        try {
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(apiServerUrl + "clothe_bank/campaign/get/clothe_bank")
+                    .queryParam("clotheBankUuid", uuid);
+
+            ResponseEntity<Campaign[]> responseEntity = restTemplate.getForEntity(builder.toUriString(), Campaign[].class);
+
+            return List.of(responseEntity.getBody());
         }
         catch (HttpClientErrorException e){
             throw new DataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
