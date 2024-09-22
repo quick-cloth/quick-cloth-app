@@ -1,27 +1,25 @@
-package org.example.quickclothapp.model;
+package org.example.quickclothapp.payload.request;
 
 import lombok.*;
+import org.example.quickclothapp.model.ContactUser;
 
 import java.math.BigInteger;
-import java.time.LocalDate;
 import java.util.UUID;
 
-
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class Foundation {
+@Builder
+public class FoundationRequest {
     private UUID uuid;
     private String name;
     private Integer nit;
-    private String legal_representative;
     private BigInteger phone;
+    private String legalRepresentative;
     private String email;
-    private LocalDate creation_date;
-    private TypeMeetUs typeMeetUs;
+    private UUID typeMeetUsUuid;
     private ContactUser contactUser;
-    private ClotheBank clotheBank;
-    private City city;
+    private UUID clotheBankUuid;
+    private UUID cityUuid;
 }

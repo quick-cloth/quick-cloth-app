@@ -15,5 +15,5 @@ public class Order {
     private LocalDate order_date;
     private LocalDate delivery_date;
     private OrderState orderState;
-    private Wardrope wardrope;
+    private Wardrobe wardrobe;
 }

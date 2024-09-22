@@ -15,6 +15,6 @@ public class Sale {
     private UUID uuid;
     private BigInteger value;
     private LocalDate sale_date;
-    private Wardrope wardrope;
+    private Wardrobe wardrobe;
     private User user;
 }

@@ -10,7 +10,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Getter
 @Setter
-public class Wardrope {
+public class Wardrobe {
     private UUID uuid;
     private String name;
     private LocalDate creation_date;

@@ -9,7 +9,8 @@ import java.util.UUID;
 @Getter
 @Setter
 @Builder
-public class WardRopeRequest {
+public class WardRobeRequest {
+    private UUID uuid;
     private String name;
     private String address;
     private UUID clotheBankUuid;

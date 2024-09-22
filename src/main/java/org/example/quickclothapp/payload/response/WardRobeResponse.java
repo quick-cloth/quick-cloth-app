@@ -1,17 +1,19 @@
-package org.example.quickclothapp.model;
+package org.example.quickclothapp.payload.response;
 
 import lombok.*;
 
 import java.util.UUID;
 
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class ClotheBank {
+@Builder
+public class WardRobeResponse {
     private UUID uuid;
     private String name;
     private String address;
-    private City city;
+    private Integer stock;
+    private String valueSales;
+    private String city;
 }

@@ -8,7 +8,7 @@ import org.example.quickclothapp.model.*;
 import org.example.quickclothapp.payload.request.BankEmployeeRequest;
 import org.example.quickclothapp.payload.request.FoundationEmployeeRequest;
 import org.example.quickclothapp.payload.request.UserRequest;
-import org.example.quickclothapp.payload.request.WardropeEmployeeRequest;
+import org.example.quickclothapp.payload.request.WardrobeEmployeeRequest;
 import org.example.quickclothapp.payload.response.MessageResponse;
 import org.example.quickclothapp.payload.response.UserResponse;
 import org.example.quickclothapp.service.intf.IFoundationService;
@@ -158,7 +158,7 @@ public class UserService implements IUserService {
     @Override
     public MessageResponse saveUserWardrope(UserRequest user, UUID wardRopeUuid) throws DataServiceException {
         validateUserInsert(user);
-        Wardrope wardRope = wardRopeService.findWardRopeByUuid(wardRopeUuid);
+        Wardrobe wardRope = wardRopeService.findWardRopeByUuid(wardRopeUuid);
         Role role = userDataService.findRoleByName(wardRopeEmployeeRol);
         TypeDocument typeDocument = userDataService.findTypeDocumentByUuid(user.getTypeDocumentUuid());
 
@@ -176,7 +176,7 @@ public class UserService implements IUserService {
                 .role(role)
                 .build();
 
-        WardropeEmployeeRequest wer = WardropeEmployeeRequest.builder()
+        WardrobeEmployeeRequest wer = WardrobeEmployeeRequest.builder()
                 .uuid(UUID.randomUUID())
                 .wardrope(wardRope)
                 .user(newUser)

@@ -6,7 +6,7 @@ import org.example.quickclothapp.model.TypeDocument;
 import org.example.quickclothapp.model.User;
 import org.example.quickclothapp.payload.request.BankEmployeeRequest;
 import org.example.quickclothapp.payload.request.FoundationEmployeeRequest;
-import org.example.quickclothapp.payload.request.WardropeEmployeeRequest;
+import org.example.quickclothapp.payload.request.WardrobeEmployeeRequest;
 
 import java.util.List;
 import java.util.UUID;
@@ -22,6 +22,6 @@ public interface IUserDataService {
     User saveUserClient(User newUser) throws DataServiceException;
     User saveUserFoundationEmployee(FoundationEmployeeRequest fer) throws DataServiceException;
     User saveUserBankEmployee(BankEmployeeRequest ber) throws DataServiceException;
-    User saveUserWardropeEmployee(WardropeEmployeeRequest wer) throws DataServiceException;
+    User saveUserWardropeEmployee(WardrobeEmployeeRequest wer) throws DataServiceException;
     List<User> findAllUsersByRol(String name) throws DataServiceException;
 }

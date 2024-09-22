@@ -1,5 +1,6 @@
 package org.example.quickclothapp.service.intf;
 
+import org.example.quickclothapp.exception.ClotheBankServiceException;
 import org.example.quickclothapp.exception.DataServiceException;
 import org.example.quickclothapp.model.Campaign;
 import org.example.quickclothapp.model.ClotheBank;
@@ -13,6 +14,6 @@ import java.util.UUID;
 public interface IClotheBankService {
     MessageResponse saveClotheBank(ClotheBankRequest clotheBank) throws DataServiceException;
     ClotheBank findClotheBankByUuid(UUID uuid) throws DataServiceException;
-    MessageResponse saveCampaign(CampaignRequest campaignRequest) throws DataServiceException;
+    MessageResponse saveCampaign(CampaignRequest campaignRequest) throws DataServiceException, ClotheBankServiceException;
     List<Campaign> findCampaignsByClotheBankUuid(UUID uuid) throws DataServiceException;
 }

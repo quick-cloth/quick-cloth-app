@@ -7,7 +7,7 @@ import org.example.quickclothapp.model.TypeDocument;
 import org.example.quickclothapp.model.User;
 import org.example.quickclothapp.payload.request.BankEmployeeRequest;
 import org.example.quickclothapp.payload.request.FoundationEmployeeRequest;
-import org.example.quickclothapp.payload.request.WardropeEmployeeRequest;
+import org.example.quickclothapp.payload.request.WardrobeEmployeeRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -183,12 +183,12 @@ public class UserDataService implements IUserDataService {
     }
 
     @Override
-    public User saveUserWardropeEmployee(WardropeEmployeeRequest wer) throws DataServiceException {
+    public User saveUserWardropeEmployee(WardrobeEmployeeRequest wer) throws DataServiceException {
         try {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
 
-            HttpEntity<WardropeEmployeeRequest> request = new HttpEntity<>(wer, headers);
+            HttpEntity<WardrobeEmployeeRequest> request = new HttpEntity<>(wer, headers);
 
             ResponseEntity<User> responseEntity = restTemplate.exchange(
                     apiServerUrl + "user/wardrope_employee/save",

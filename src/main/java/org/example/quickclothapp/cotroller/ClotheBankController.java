@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.example.quickclothapp.exception.ClotheBankServiceException;
 import org.example.quickclothapp.exception.DataServiceException;
 import org.example.quickclothapp.payload.request.CampaignRequest;
 import org.example.quickclothapp.payload.request.ClotheBankRequest;
@@ -43,7 +44,7 @@ public class ClotheBankController {
     public ResponseEntity<?> saveCampaign(@RequestBody CampaignRequest campaign) {
         try {
             return ResponseEntity.ok(clotheBankService.saveCampaign(campaign));
-        } catch (DataServiceException e) {
+        } catch (DataServiceException | ClotheBankServiceException e) {
             return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage(), null, null));
         }
     }

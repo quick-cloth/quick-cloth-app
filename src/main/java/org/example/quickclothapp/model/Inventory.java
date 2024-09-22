@@ -16,7 +16,7 @@ public class Inventory {
     private UUID uuid;
     private Integer stock;
     private Integer minimum_stock;
-    private Wardrope wardrope;
+    private Wardrobe wardrobe;
     private Clothe clothe;
     private BigInteger unit_price;
 }

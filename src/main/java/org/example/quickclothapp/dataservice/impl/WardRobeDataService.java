@@ -16,29 +16,29 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-public class WardRopeDataService implements IWardRopeDataService {
+public class WardRobeDataService implements IWardRopeDataService {
     private final RestTemplate restTemplate;
     @Value("${api-server-url}")
     private String apiServerUrl;
 
-    public WardRopeDataService(RestTemplate restTemplate) {
+    public WardRobeDataService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
 
 
     @Override
-    public Wardrope saveWardrope(Wardrope wardrope) throws DataServiceException {
+    public Wardrobe saveWardrope(Wardrobe wardrope) throws DataServiceException {
         try {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
 
-            HttpEntity<Wardrope> request = new HttpEntity<>(wardrope, headers);
+            HttpEntity<Wardrobe> request = new HttpEntity<>(wardrope, headers);
 
-            ResponseEntity<Wardrope> responseEntity = restTemplate.exchange(
+            ResponseEntity<Wardrobe> responseEntity = restTemplate.exchange(
                     apiServerUrl + "ward_rope/save",
                     HttpMethod.POST,
                     request,
-                    Wardrope.class
+                    Wardrobe.class
             );
 
             return responseEntity.getBody();
@@ -48,12 +48,30 @@ public class WardRopeDataService implements IWardRopeDataService {
     }
 
     @Override
-    public Wardrope findWardRopeByUuid(UUID uuid) throws DataServiceException {
+    public Wardrobe findWardRopeByUuid(UUID uuid) throws DataServiceException {
         try {
             UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(apiServerUrl + "ward_rope/get")
                     .queryParam("uuid", uuid);
 
-            return restTemplate.getForObject(builder.toUriString(), Wardrope.class);
+            return restTemplate.getForObject(builder.toUriString(), Wardrobe.class);
+        } catch (HttpClientErrorException e) {
+            throw new DataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
+        }
+    }
+
+    @Override
+    public List<Wardrobe> finAllWardRopeByClotheBankUuid(UUID clotheBankUuid) throws DataServiceException {
+        try {
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(apiServerUrl + "ward_rope/get_all")
+                    .queryParam("clotheBankUuid", clotheBankUuid);
+
+            ResponseEntity<Wardrobe[]> responseEntity = restTemplate.exchange(
+                    builder.toUriString(),
+                    HttpMethod.GET,
+                    null,
+                    Wardrobe[].class);
+
+            return List.of(responseEntity.getBody());
         } catch (HttpClientErrorException e) {
             throw new DataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
         }
@@ -75,6 +93,24 @@ public class WardRopeDataService implements IWardRopeDataService {
             );
 
             return responseEntity.getBody();
+        } catch (HttpClientErrorException e) {
+            throw new DataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
+        }
+    }
+
+    @Override
+    public List<Sale> findSalesByWardRopeUuid(UUID wardRopeUuid) throws DataServiceException {
+        try {
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(apiServerUrl + "ward_rope/sale/get_all")
+                    .queryParam("wardRopeUuid", wardRopeUuid);
+
+            ResponseEntity<Sale[]> responseEntity = restTemplate.exchange(
+                    builder.toUriString(),
+                    HttpMethod.GET,
+                    null,
+                    Sale[].class);
+
+            return List.of(responseEntity.getBody());
         } catch (HttpClientErrorException e) {
             throw new DataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
         }

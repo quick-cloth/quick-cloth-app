@@ -2,7 +2,7 @@ package org.example.quickclothapp.payload.request;
 
 import lombok.*;
 import org.example.quickclothapp.model.User;
-import org.example.quickclothapp.model.Wardrope;
+import org.example.quickclothapp.model.Wardrobe;
 
 import java.util.UUID;
 
@@ -11,8 +11,8 @@ import java.util.UUID;
 @NoArgsConstructor
 @Getter
 @Setter
-public class WardropeEmployeeRequest {
+public class WardrobeEmployeeRequest {
     private UUID uuid;
-    private Wardrope wardrope;
+    private Wardrobe wardrope;
     private User user;
 }

@@ -13,7 +13,6 @@ import java.util.UUID;
 @Setter
 @Builder
 public class SaleRequest {
-    private BigInteger value;
     private UUID wardRopeUuid;
     private UUID userUuid;
     private List<SaleListRequest> saleList;
