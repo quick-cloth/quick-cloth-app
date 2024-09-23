@@ -8,11 +8,14 @@ import org.example.quickclothapp.model.*;
 import org.example.quickclothapp.payload.request.CampaignRequest;
 import org.example.quickclothapp.payload.request.ClotheBankRequest;
 import org.example.quickclothapp.payload.request.EmailRequest;
+import org.example.quickclothapp.payload.response.CampaignResponse;
 import org.example.quickclothapp.payload.response.MessageResponse;
 import org.example.quickclothapp.service.intf.*;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -101,7 +104,31 @@ public class ClotheBankService implements IClotheBankService {
 
     @Override
     public List<Campaign> findCampaignsByClotheBankUuid(UUID uuid) throws DataServiceException {
-        return clotheBankDataService.findCampaignsByClotheBankUuid(uuid);
+        return clotheBankDataService.findCampaignsByClotheBankUuid(uuid, null, null);
+    }
+
+    @Override
+    public List<CampaignResponse> findAllCampaignsByClotheBankUuid(UUID clotheBankUuid, LocalDate startDate, LocalDate endDate) throws DataServiceException {
+        List<Campaign> campaigns = clotheBankDataService.findCampaignsByClotheBankUuid(clotheBankUuid, startDate, endDate);
+
+        List<CampaignResponse> campaignResponses = new ArrayList<>();
+
+        for(Campaign c :  campaigns){
+            CampaignResponse cr = CampaignResponse.builder()
+                    .uuid(c.getUuid())
+                    .campaignName(c.getName())
+                    .startDate(c.getCreation_date())
+                    .endDate(c.getEnd_date())
+                    .build();
+            campaignResponses.add(cr);
+        }
+
+        return campaignResponses;
+    }
+
+    @Override
+    public List<TypeCampaign> findAllTypeCampaign() throws DataServiceException {
+        return clotheBankDataService.findAllTypeCampaign();
     }
 
     @Async

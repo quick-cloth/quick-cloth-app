@@ -14,5 +14,7 @@ public interface IClotheService {
     TypeClothe findTypeClotheByUuid(UUID typeClotheUuid) throws DataServiceException;
     TypeGender findTypeGenderByUuid(UUID typeGenderUuid) throws DataServiceException;
     TypeStage findTypeStageByUuid(UUID typeStageUuid) throws DataServiceException;
-    //List<>
+    List<TypeStage> findAllTypeStage() throws DataServiceException;
+    List<TypeGender> findAllTypeGender() throws DataServiceException;
+    List<TypeClothe> findAllTypeClothe() throws DataServiceException;
 }

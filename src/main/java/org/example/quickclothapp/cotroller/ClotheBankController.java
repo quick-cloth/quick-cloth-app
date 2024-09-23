@@ -6,15 +6,17 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.example.quickclothapp.exception.ClotheBankServiceException;
 import org.example.quickclothapp.exception.DataServiceException;
+import org.example.quickclothapp.model.TypeCampaign;
 import org.example.quickclothapp.payload.request.CampaignRequest;
 import org.example.quickclothapp.payload.request.ClotheBankRequest;
+import org.example.quickclothapp.payload.response.CampaignResponse;
 import org.example.quickclothapp.payload.response.MessageResponse;
 import org.example.quickclothapp.service.intf.IClotheBankService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/application/clothe_bank")
@@ -48,4 +50,29 @@ public class ClotheBankController {
             return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage(), null, null));
         }
     }
+
+    @Operation(summary = "#TODO: 22 de septiembre -> Obtener campañas", description = "Obtiene todas las campañas dado el uuid del banco de ropa, los atributos discount y valueDiscount se retornan como nulos")
+    @ApiResponse(responseCode = "200", description = "La lista de campañas", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = CampaignResponse.class))})
+    @ApiResponse(responseCode = "400", description = "El valor mensaje retorna el mensaje de error", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = MessageResponse.class))})
+    @GetMapping("/campaign/get_all")
+    public ResponseEntity<?> getAllCampaigns(@RequestParam UUID clotheBankUuid, @RequestParam(required = false) LocalDate startDate, @RequestParam(required = false) LocalDate endDate) {
+        try {
+            return ResponseEntity.ok(clotheBankService.findAllCampaignsByClotheBankUuid(clotheBankUuid, startDate, endDate));
+        } catch (DataServiceException e) {
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage(), null, null));
+        }
+    }
+
+    @Operation(summary = "#TODO: 22 de septiembre -> Obtener todos los tipos de campañas", description = "Obtiene todos los tipos de campañas")
+    @ApiResponse(responseCode = "200", description = "Lista de Tipos de campañas", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = TypeCampaign.class))})
+    @ApiResponse(responseCode = "400", description = "El valor mensaje retorna el mensaje de error", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = MessageResponse.class))})
+    @GetMapping("/type_campaign/get_all")
+    public ResponseEntity<?> getAllTypeCampaign() {
+        try {
+            return ResponseEntity.ok(clotheBankService.findAllTypeCampaign());
+        } catch (DataServiceException e) {
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage(), null, null));
+        }
+    }
+
 }

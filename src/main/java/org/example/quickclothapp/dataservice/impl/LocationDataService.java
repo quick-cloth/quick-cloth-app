@@ -27,8 +27,15 @@ public class LocationDataService implements ILocationDataService {
 
 
     @Override
-    public List<Department> getAllDepartments() {
-        return null;
+    public List<Department> getAllDepartments() throws DataServiceException {
+        try {
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(apiServerUrl + "location/department/get_all");
+
+            return List.of(restTemplate.getForObject(builder.toUriString(), Department[].class));
+        }
+        catch (HttpClientErrorException e){
+            throw new DataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
+        }
     }
 
     @Override
@@ -37,8 +44,16 @@ public class LocationDataService implements ILocationDataService {
     }
 
     @Override
-    public List<City> getAllCitiesByDepartment(UUID departmentUuid) {
-        return null;
+    public List<City> getAllCitiesByDepartment(UUID departmentUuid) throws DataServiceException {
+        try {
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(apiServerUrl + "location/city/get_all/by")
+                    .queryParam("departmentUuid", departmentUuid);
+
+            return List.of(restTemplate.getForObject(builder.toUriString(), City[].class));
+        }
+        catch (HttpClientErrorException e){
+            throw new DataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
+        }
     }
 
     @Override

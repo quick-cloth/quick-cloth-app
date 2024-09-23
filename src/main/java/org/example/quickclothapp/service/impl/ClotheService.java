@@ -9,6 +9,7 @@ import org.example.quickclothapp.model.TypeStage;
 import org.example.quickclothapp.service.intf.IClotheService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -38,5 +39,20 @@ public class ClotheService implements IClotheService {
     @Override
     public TypeStage findTypeStageByUuid(UUID typeStageUuid) throws DataServiceException {
         return clotheDataService.findTypeStageByUuid(typeStageUuid);
+    }
+
+    @Override
+    public List<TypeStage> findAllTypeStage() throws DataServiceException {
+        return clotheDataService.findAllTypeStage();
+    }
+
+    @Override
+    public List<TypeGender> findAllTypeGender() throws DataServiceException{
+        return clotheDataService.findAllTypeGender();
+    }
+
+    @Override
+    public List<TypeClothe> findAllTypeClothe() throws DataServiceException {
+        return clotheDataService.findAllTypeClothe();
     }
 }

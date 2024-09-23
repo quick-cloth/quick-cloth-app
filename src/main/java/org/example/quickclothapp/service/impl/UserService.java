@@ -192,6 +192,32 @@ public class UserService implements IUserService {
         return userDataService.findAllUsersByRol(clientRol);
     }
 
+    @Override
+    public UserResponse UserWardRobeByUsername(String username) throws DataServiceException {
+        WardRobeEmployee wardRobeEmployee = userDataService.findWarRobeEmployeeByUsername(username);
+
+        return UserResponse.builder()
+                .uuid(wardRobeEmployee.getUser().getUuid())
+                .name(wardRobeEmployee.getUser().getName())
+                .lastName(wardRobeEmployee.getUser().getLast_name())
+                .email(wardRobeEmployee.getUser().getEmail())
+                .wardRopeUuid(wardRobeEmployee.getWardrobe().getUuid())
+                .build();
+    }
+
+    @Override
+    public UserResponse findBankEmployeeByUsername(String username) throws DataServiceException {
+        BankEmployee bankEmployee = userDataService.findBankEmployeeByUsername(username);
+
+        return UserResponse.builder()
+                .uuid(bankEmployee.getUser().getUuid())
+                .name(bankEmployee.getUser().getName())
+                .lastName(bankEmployee.getUser().getLast_name())
+                .email(bankEmployee.getUser().getEmail())
+                .clotheBankUuid(bankEmployee.getClotheBank().getUuid())
+                .build();
+    }
+
     private void validateUserInsert(UserRequest userRequest) throws DataServiceException {
         if(userDataService.findUserByDocumentNumber(userRequest.getDocumentNumber()) != null){
             throw new DataServiceException("User document already exists", 400);

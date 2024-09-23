@@ -12,6 +12,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -95,12 +96,31 @@ public class ClotheBankDataService implements IClotheBankDataService {
     }
 
     @Override
-    public List<Campaign> findCampaignsByClotheBankUuid(UUID uuid) throws DataServiceException {
+    public List<Campaign> findCampaignsByClotheBankUuid(UUID uuid, LocalDate startDate, LocalDate endDate) throws DataServiceException {
         try {
-            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(apiServerUrl + "clothe_bank/campaign/get/clothe_bank")
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(apiServerUrl + "clothe_bank/campaign/get_all/clothe_bank")
                     .queryParam("clotheBankUuid", uuid);
 
+            if (startDate != null && endDate != null){
+                builder.queryParam("startDate", startDate);
+                builder.queryParam("endDate", endDate);
+            }
+
             ResponseEntity<Campaign[]> responseEntity = restTemplate.getForEntity(builder.toUriString(), Campaign[].class);
+
+            return List.of(responseEntity.getBody());
+        }
+        catch (HttpClientErrorException e){
+            throw new DataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
+        }
+    }
+
+    @Override
+    public List<TypeCampaign> findAllTypeCampaign() throws DataServiceException {
+        try {
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(apiServerUrl + "clothe_bank/type_campaign/get_all");
+
+            ResponseEntity<TypeCampaign[]> responseEntity = restTemplate.getForEntity(builder.toUriString(), TypeCampaign[].class);
 
             return List.of(responseEntity.getBody());
         }

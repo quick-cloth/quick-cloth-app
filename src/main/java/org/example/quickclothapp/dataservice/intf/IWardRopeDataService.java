@@ -14,9 +14,9 @@ public interface IWardRopeDataService {
     List<Wardrobe> finAllWardRopeByClotheBankUuid(UUID clotheBankUuid) throws DataServiceException;
     Sale saveSale(SaleDataRequest newSale) throws DataServiceException;
     List<Sale> findSalesByWardRopeUuid(UUID uuid) throws DataServiceException;
-
     List<Inventory> findInventoriesByWardRopeUuid(UUID wardRopeUuid) throws DataServiceException;
     Inventory findInventoryByClotheUuidAndWardRopeUuid(UUID clotheUuid, UUID wardRopeUuid) throws DataServiceException;
     OrderState findOrderStateByName(String orderName) throws DataServiceException;
     Order saveOrder(OrderDataRequest or) throws DataServiceException;
+    List<OrderState> findAllOrderStates() throws DataServiceException;
 }

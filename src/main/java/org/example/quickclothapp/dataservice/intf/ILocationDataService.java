@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.UUID;
 
 public interface ILocationDataService {
-    List<Department> getAllDepartments();
+    List<Department> getAllDepartments() throws DataServiceException;
     Department findDepartmentByUuid(UUID uuid);
-    List<City> getAllCitiesByDepartment(UUID departmentUuid);
+    List<City> getAllCitiesByDepartment(UUID departmentUuid) throws DataServiceException;
     City findCityByUuid(UUID cityUuid) throws DataServiceException;
 }

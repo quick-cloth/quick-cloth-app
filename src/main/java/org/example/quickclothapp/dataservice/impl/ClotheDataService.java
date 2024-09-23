@@ -12,6 +12,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -71,6 +72,42 @@ public class ClotheDataService implements IClotheDataService {
                     .queryParam("uuid", typeStageUuid);
 
             return restTemplate.getForObject(builder.toUriString(), TypeStage.class);
+        }
+        catch (HttpClientErrorException e){
+            throw new DataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
+        }
+    }
+
+    @Override
+    public List<TypeStage> findAllTypeStage() throws DataServiceException {
+        try {
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(apiServerUrl + "clothe/type_stage/get_all");
+
+            return List.of(restTemplate.getForObject(builder.toUriString(), TypeStage[].class));
+        }
+        catch (HttpClientErrorException e){
+            throw new DataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
+        }
+    }
+
+    @Override
+    public List<TypeGender> findAllTypeGender() throws DataServiceException {
+        try {
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(apiServerUrl + "clothe/type_gender/get_all");
+
+            return List.of(restTemplate.getForObject(builder.toUriString(), TypeGender[].class));
+        }
+        catch (HttpClientErrorException e) {
+            throw new DataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
+        }
+    }
+
+    @Override
+    public List<TypeClothe> findAllTypeClothe() throws DataServiceException {
+        try {
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(apiServerUrl + "clothe/type_clothe/get_all");
+
+            return List.of(restTemplate.getForObject(builder.toUriString(), TypeClothe[].class));
         }
         catch (HttpClientErrorException e){
             throw new DataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());

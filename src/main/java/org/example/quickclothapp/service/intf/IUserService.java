@@ -17,4 +17,6 @@ public interface IUserService {
     MessageResponse saveUserBank(UserRequest user, UUID clotheBankUuid) throws DataServiceException;
     MessageResponse saveUserWardrope(UserRequest user, UUID wardRopeUuid) throws DataServiceException;
     List<User> getAllClientsUsers() throws DataServiceException;
+    UserResponse UserWardRobeByUsername(String username) throws DataServiceException;
+    UserResponse findBankEmployeeByUsername(String username) throws DataServiceException;
 }

@@ -9,11 +9,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @Builder
-public class UserResponse {
-    private UUID uuid;
+public class CityResponse {
     private String name;
-    private String lastName;
-    private String email;
-    private UUID wardRopeUuid;
-    private UUID clotheBankUuid;
+    private UUID departmentUuid;
 }

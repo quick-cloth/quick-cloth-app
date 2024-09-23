@@ -1,8 +1,14 @@
 package org.example.quickclothapp.cotroller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.example.quickclothapp.exception.DataServiceException;
+import org.example.quickclothapp.model.TypeMeetUs;
 import org.example.quickclothapp.payload.request.FoundationRequest;
 import org.example.quickclothapp.payload.response.MessageResponse;
+import org.example.quickclothapp.payload.response.UserResponse;
 import org.example.quickclothapp.service.intf.IFoundationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -57,6 +63,9 @@ public class FoundationController {
         }
     }
 
+    @Operation(summary = "#TODO: 22 de septiembre -> Obtener todos lo tipos de como nos conocieron", description = "Obtener todos los tipos de como nos conocieron")
+    @ApiResponse(responseCode = "200", description = "Tipos de como nos conocieron", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = TypeMeetUs.class))})
+    @ApiResponse(responseCode = "400", description = "El valor mensaje retorna el mensaje de error", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = MessageResponse.class))})
     @GetMapping("/type_meet_us/get_all")
     public ResponseEntity<?> getAllTypeMeetUs() {
         try {

@@ -301,6 +301,17 @@ public class WardRobeService implements IWardRobeService {
     }
 
     @Override
+    public WardRobeResponse findWardRopeByUuid(UUID uuid) throws DataServiceException {
+        Wardrobe wardRope = wardRopeDataService.findWardRopeByUuid(uuid);
+
+        return WardRobeResponse.builder()
+                .uuid(wardRope.getUuid())
+                .city(wardRope.getCity().getName())
+                .address(wardRope.getAddress())
+                .build();
+    }
+
+    @Override
     public List<InventoryResponse> findInventoriesByWardRopeUuid(UUID wardRopeUuid) throws DataServiceException {
         List<Inventory> inventories = wardRopeDataService.findInventoriesByWardRopeUuid(wardRopeUuid);
 
@@ -410,6 +421,11 @@ public class WardRobeService implements IWardRobeService {
         }
 
         return wardRobeResponses;
+    }
+
+    @Override
+    public List<OrderState> getAllOrderStates() throws DataServiceException{
+        return wardRopeDataService.findAllOrderStates();
     }
 
 }

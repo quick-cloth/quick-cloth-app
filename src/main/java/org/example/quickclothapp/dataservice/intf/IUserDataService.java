@@ -1,9 +1,7 @@
 package org.example.quickclothapp.dataservice.intf;
 
 import org.example.quickclothapp.exception.DataServiceException;
-import org.example.quickclothapp.model.Role;
-import org.example.quickclothapp.model.TypeDocument;
-import org.example.quickclothapp.model.User;
+import org.example.quickclothapp.model.*;
 import org.example.quickclothapp.payload.request.BankEmployeeRequest;
 import org.example.quickclothapp.payload.request.FoundationEmployeeRequest;
 import org.example.quickclothapp.payload.request.WardrobeEmployeeRequest;
@@ -24,4 +22,7 @@ public interface IUserDataService {
     User saveUserBankEmployee(BankEmployeeRequest ber) throws DataServiceException;
     User saveUserWardropeEmployee(WardrobeEmployeeRequest wer) throws DataServiceException;
     List<User> findAllUsersByRol(String name) throws DataServiceException;
+    WardRobeEmployee findWarRobeEmployeeByUsername(String username) throws DataServiceException;
+
+    BankEmployee findBankEmployeeByUsername(String username) throws DataServiceException;
 }

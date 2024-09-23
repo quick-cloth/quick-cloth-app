@@ -2,9 +2,7 @@ package org.example.quickclothapp.dataservice.impl;
 
 import org.example.quickclothapp.dataservice.intf.IUserDataService;
 import org.example.quickclothapp.exception.DataServiceException;
-import org.example.quickclothapp.model.Role;
-import org.example.quickclothapp.model.TypeDocument;
-import org.example.quickclothapp.model.User;
+import org.example.quickclothapp.model.*;
 import org.example.quickclothapp.payload.request.BankEmployeeRequest;
 import org.example.quickclothapp.payload.request.FoundationEmployeeRequest;
 import org.example.quickclothapp.payload.request.WardrobeEmployeeRequest;
@@ -216,6 +214,32 @@ public class UserDataService implements IUserDataService {
                     User[].class);
 
             return List.of(responseEntity.getBody());
+        }
+        catch (HttpClientErrorException e){
+            throw new DataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
+        }
+    }
+
+    @Override
+    public WardRobeEmployee findWarRobeEmployeeByUsername(String username) throws DataServiceException {
+        try {
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(apiServerUrl + "user/wardrobe_employee/get")
+                    .queryParam("username", username);
+
+            return restTemplate.getForObject(builder.toUriString(), WardRobeEmployee.class);
+        }
+        catch (HttpClientErrorException e){
+            throw new DataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
+        }
+    }
+
+    @Override
+    public BankEmployee findBankEmployeeByUsername(String username) throws DataServiceException {
+        try {
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(apiServerUrl + "user/bank_employee/get")
+                    .queryParam("username", username);
+
+            return restTemplate.getForObject(builder.toUriString(), BankEmployee.class);
         }
         catch (HttpClientErrorException e){
             throw new DataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());

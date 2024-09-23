@@ -6,12 +6,14 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.example.quickclothapp.exception.DataServiceException;
 import org.example.quickclothapp.exception.WardRopeServiceExpetion;
+import org.example.quickclothapp.model.OrderState;
 import org.example.quickclothapp.payload.request.OrderRequest;
 import org.example.quickclothapp.payload.request.SaleRequest;
 import org.example.quickclothapp.payload.request.WardRobeRequest;
 import org.example.quickclothapp.payload.response.InventoryResponse;
 import org.example.quickclothapp.payload.response.MessageResponse;
 import org.example.quickclothapp.payload.response.SaleResponse;
+import org.example.quickclothapp.payload.response.WardRobeResponse;
 import org.example.quickclothapp.service.intf.IWardRobeService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -39,6 +41,9 @@ public class WardRobeController {
         }
     }
 
+    @Operation(summary = "#TODO: 22 de septiembre -> Obtener Roperos", description = "Obtiene todos los roperos dado el uuid del banco de ropa")
+    @ApiResponse(responseCode = "200", description = "La lista de roperos", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = WardRobeResponse.class))})
+    @ApiResponse(responseCode = "400", description = "El valor mensaje retorna el mensaje de error", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = MessageResponse.class))})
     @GetMapping("/get_all/clothe_bank")
     public ResponseEntity<?> getAllWardRobes(@RequestParam UUID clotheBankUuid) {
         try {
@@ -48,10 +53,25 @@ public class WardRobeController {
         }
     }
 
+    @Operation(summary = "#TODO: 22 de septiembre -> Actualizar Ropero", description = "Actualiza un ropero dada la entidad del ropero")
+    @ApiResponse(responseCode = "200", description = "El valor uuid retorna el uuid del ropero actualizado", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = MessageResponse.class))})
+    @ApiResponse(responseCode = "400", description = "El valor mensaje retorna el mensaje de error", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = MessageResponse.class))})
     @PutMapping("/update")
-    public ResponseEntity<?> updateWardRope(@RequestBody WardRobeRequest wardrope) {
+    public ResponseEntity<?> updateWardRope(@RequestBody WardRobeRequest wardrobe) {
         try {
-            return ResponseEntity.ok(wardRopeService.updateWardRope(wardrope));
+            return ResponseEntity.ok(wardRopeService.updateWardRope(wardrobe));
+        } catch (DataServiceException e) {
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage(), null, null));
+        }
+    }
+
+    @Operation(summary = "#TODO: 22 de septiembre -> Obtener Ropero", description = "Obtiene un ropero dado el uuid del ropero")
+    @ApiResponse(responseCode = "200", description = "Entidad del ropero", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = WardRobeResponse.class))})
+    @ApiResponse(responseCode = "400", description = "El valor mensaje retorna el mensaje de error", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = MessageResponse.class))})
+    @GetMapping("/get")
+    public ResponseEntity<?> getWardRope(@RequestParam UUID uuid) {
+        try {
+            return ResponseEntity.ok(wardRopeService.findWardRopeByUuid(uuid));
         } catch (DataServiceException e) {
             return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage(), null, null));
         }
@@ -116,4 +136,17 @@ public class WardRobeController {
             return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage(), null, null));
         }
     }
+
+    @Operation(summary = "#TODO: 22 de septiembre -> Obtener tipos de estado de orden")
+    @ApiResponse(responseCode = "200", description = "La lista de tipos de estado de orden", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = OrderState.class))})
+    @ApiResponse(responseCode = "400", description = "El valor mensaje retorna el mensaje de error", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = MessageResponse.class))})
+    @GetMapping("/order_state/get_all")
+    public ResponseEntity<?> getAllOrderStates() {
+        try {
+            return ResponseEntity.ok(wardRopeService.getAllOrderStates());
+        } catch (DataServiceException e) {
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage(), null, null));
+        }
+    }
+
 }
