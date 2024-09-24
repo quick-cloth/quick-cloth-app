@@ -250,7 +250,7 @@ public class WardRobeService implements IWardRobeService {
                 .saleListRequests(saleLists)
                 .build();
 
-        //wardRopeDataService.saveSale(sdr);
+        wardRopeDataService.saveSale(sdr);
 
         sendEmailNewSale(newSale, saleLists, campaignResponses);
 
@@ -303,11 +303,37 @@ public class WardRobeService implements IWardRobeService {
     @Override
     public WardRobeResponse findWardRopeByUuid(UUID uuid) throws DataServiceException {
         Wardrobe wardRope = wardRopeDataService.findWardRopeByUuid(uuid);
+        List<Sale> sales = wardRopeDataService.findSalesByWardRopeUuid(uuid);
+
+        BigInteger totalSales = BigInteger.ZERO;
+        Integer totalStockSold = 0;
+        int totalStock = 0;
+
+        List<Inventory> inventories = wardRopeDataService.findInventoriesByWardRopeUuid(wardRope.getUuid());
+
+        for (Inventory i : inventories) {
+            totalStock += i.getStock();
+        }
+
+
+        for (Sale s : sales){
+            totalSales = totalSales.add(s.getValue());
+            List<SaleList> saleLists = wardRopeDataService.findSaleListBySaleUuid(s.getUuid());
+
+            for(SaleList sl : saleLists){
+                totalStockSold += sl.getQuantity();
+            }
+        }
+
 
         return WardRobeResponse.builder()
                 .uuid(wardRope.getUuid())
                 .city(wardRope.getCity().getName())
+                .name(wardRope.getName())
                 .address(wardRope.getAddress())
+                .valueSales(String.valueOf(totalSales))
+                .unitSold(totalStockSold)
+                .stock(totalStock)
                 .build();
     }
 
@@ -315,21 +341,42 @@ public class WardRobeService implements IWardRobeService {
     public List<InventoryResponse> findInventoriesByWardRopeUuid(UUID wardRopeUuid) throws DataServiceException {
         List<Inventory> inventories = wardRopeDataService.findInventoriesByWardRopeUuid(wardRopeUuid);
 
+        List<TypeGender> typeGenders = clotheService.findAllTypeGender();
+        List<TypeStage> typeStages = clotheService.findAllTypeStage();
         List<InventoryResponse> inventoryResponses = new ArrayList<>();
 
-        for (Inventory i : inventories) {
-            InventoryResponse ir = InventoryResponse.builder()
-                    .uuid(i.getUuid())
-                    .clotheUuid(i.getClothe().getUuid())
-                    .stock(i.getStock())
-                    .minimumStock(i.getMinimum_stock())
-                    .typeGenderName(i.getClothe().getTypeGender().getName())
-                    .clotheName(i.getClothe().getTypeClothe().getName())
-                    .typeStageName(i.getClothe().getTypeStage().getName())
-                    .unitPrice(i.getUnit_price())
-                    .build();
+        List<String> typeGenderNames = new ArrayList<>();
 
-            inventoryResponses.add(ir);
+        typeGenders.forEach(tg -> typeGenderNames.add(tg.getName()));
+
+        for(Inventory i : inventories){
+            InventoryResponse inventoryResponse = new InventoryResponse();
+            List<TypeStageResponse> typeStageResponses = new ArrayList<>();
+            for (String typeGenderName : typeGenderNames){
+                for(TypeStage typeStage : typeStages){
+                    TypeStageResponse typeStageResponse;
+                    if(i.getClothe().getTypeStage().getName().equals(typeStage.getName()) && i.getClothe().getTypeGender().getName().equals(typeGenderName)){
+                        typeStageResponse = TypeStageResponse.builder()
+                                .typeGenderName(typeGenderName)
+                                .name(typeStage.getName())
+                                .stock(i.getStock())
+                                .build();
+                    }
+                    else{
+                        typeStageResponse = TypeStageResponse.builder()
+                                .name(typeStage.getName())
+                                .typeGenderName(typeGenderName)
+                                .stock(0)
+                                .build();
+                    }
+                    typeStageResponses.add(typeStageResponse);
+                }
+            }
+            inventoryResponse.setTypeStageResponses(typeStageResponses);
+            inventoryResponse.setClotheName(i.getClothe().getTypeClothe().getName());
+            inventoryResponse.setTotalStock(inventoryResponse.getTypeStageResponses().stream().map(TypeStageResponse::getStock).mapToInt(Integer::intValue).sum());
+            inventoryResponse.setTypeGenderList(typeGenderNames);
+            inventoryResponses.add(inventoryResponse);
         }
 
         return inventoryResponses;
@@ -340,14 +387,7 @@ public class WardRobeService implements IWardRobeService {
         Inventory inventory = wardRopeDataService.findInventoryByClotheUuidAndWardRopeUuid(clotheUuid, wardRopeUuid);
 
         return InventoryResponse.builder()
-                .uuid(inventory.getUuid())
-                .clotheUuid(inventory.getClothe().getUuid())
-                .stock(inventory.getStock())
-                .minimumStock(inventory.getMinimum_stock())
-                .typeGenderName(inventory.getClothe().getTypeGender().getName())
                 .clotheName(inventory.getClothe().getTypeClothe().getName())
-                .typeStageName(inventory.getClothe().getTypeStage().getName())
-                .unitPrice(inventory.getUnit_price())
                 .build();
     }
 
@@ -426,6 +466,55 @@ public class WardRobeService implements IWardRobeService {
     @Override
     public List<OrderState> getAllOrderStates() throws DataServiceException{
         return wardRopeDataService.findAllOrderStates();
+    }
+
+    @Override
+    public List<SaleWardRobeResponse> findSalesByWardRopeUuid(UUID wardRopeUuid) throws DataServiceException {
+        List<Sale> sales = wardRopeDataService.findSalesByWardRopeUuid(wardRopeUuid);
+        List<SaleWardRobeResponse> saleWardRobeResponses = new ArrayList<>();
+
+        for(Sale s: sales){
+            List<SaleList> saleLists = wardRopeDataService.findSaleListBySaleUuid(s.getUuid());
+            int quantity = 0;
+
+            for (SaleList sl : saleLists){
+                quantity += sl.getQuantity();
+            }
+            SaleWardRobeResponse swr = SaleWardRobeResponse.builder()
+                    .uuid(s.getUuid())
+                    .date(s.getSale_date())
+                    .quantity(quantity)
+                    .price(s.getValue().toString())
+                    .build();
+
+            saleWardRobeResponses.add(swr);
+        }
+        return saleWardRobeResponses;
+    }
+
+    @Override
+    public SaleWardRobeResponse findSaleByUuid(UUID uuid) throws DataServiceException {
+        List<SaleList> saleLists = wardRopeDataService.findSaleListBySaleUuid(uuid);
+        List<SaleListWardRobeResponse> saleListWardRobeResponses = new ArrayList<>();
+        SaleWardRobeResponse saleWardRobeResponse = SaleWardRobeResponse.builder()
+                .uuid(saleLists.get(0).getSale().getUuid())
+                .price(saleLists.get(0).getSale().getValue().toString())
+                .date(saleLists.get(0).getSale().getSale_date())
+                .saleList(saleListWardRobeResponses)
+                .build();
+
+        for (SaleList sl : saleLists){
+            SaleListWardRobeResponse slwr = SaleListWardRobeResponse.builder()
+                    .clotheName(sl.getClothe().getTypeClothe().getName())
+                    .quantity(sl.getQuantity())
+                    .value(String.valueOf(sl.getValue()))
+                    .typeGenderName(sl.getClothe().getTypeGender().getName())
+                    .typeStageName(sl.getClothe().getTypeStage().getName())
+                    .build();
+            saleWardRobeResponse.getSaleList().add(slwr);
+        }
+
+        return saleWardRobeResponse;
     }
 
 }

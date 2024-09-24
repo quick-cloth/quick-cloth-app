@@ -16,4 +16,5 @@ public class WardRobeResponse {
     private Integer stock;
     private String valueSales;
     private String city;
+    private Integer unitSold;
 }

@@ -43,8 +43,6 @@ public class FoundationController {
         }
     }
 
-    //@DeleteMapping("/delete")
-
     @GetMapping("/get_all/clothe_bank")
     public ResponseEntity<?> getAllFoundationByClotheBank(@RequestParam UUID clotheBankUuid) {
         try {

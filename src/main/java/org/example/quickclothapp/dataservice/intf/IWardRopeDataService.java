@@ -19,4 +19,5 @@ public interface IWardRopeDataService {
     OrderState findOrderStateByName(String orderName) throws DataServiceException;
     Order saveOrder(OrderDataRequest or) throws DataServiceException;
     List<OrderState> findAllOrderStates() throws DataServiceException;
+    List<SaleList> findSaleListBySaleUuid(UUID uuid) throws DataServiceException;
 }

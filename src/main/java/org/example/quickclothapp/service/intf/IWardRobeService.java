@@ -7,10 +7,7 @@ import org.example.quickclothapp.model.Wardrobe;
 import org.example.quickclothapp.payload.request.OrderRequest;
 import org.example.quickclothapp.payload.request.SaleRequest;
 import org.example.quickclothapp.payload.request.WardRobeRequest;
-import org.example.quickclothapp.payload.response.InventoryResponse;
-import org.example.quickclothapp.payload.response.MessageResponse;
-import org.example.quickclothapp.payload.response.SaleResponse;
-import org.example.quickclothapp.payload.response.WardRobeResponse;
+import org.example.quickclothapp.payload.response.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -27,4 +24,6 @@ public interface IWardRobeService {
     MessageResponse createOrder(OrderRequest orderRequest) throws DataServiceException;
     List<WardRobeResponse> finAllWardRobeByClotheBankUuid(UUID clotheBankUuid) throws DataServiceException;
     List<OrderState> getAllOrderStates() throws DataServiceException;
+    List<SaleWardRobeResponse> findSalesByWardRopeUuid(UUID wardRopeUuid) throws DataServiceException;
+    SaleWardRobeResponse findSaleByUuid(UUID uuid) throws DataServiceException;
 }

@@ -10,10 +10,7 @@ import org.example.quickclothapp.model.OrderState;
 import org.example.quickclothapp.payload.request.OrderRequest;
 import org.example.quickclothapp.payload.request.SaleRequest;
 import org.example.quickclothapp.payload.request.WardRobeRequest;
-import org.example.quickclothapp.payload.response.InventoryResponse;
-import org.example.quickclothapp.payload.response.MessageResponse;
-import org.example.quickclothapp.payload.response.SaleResponse;
-import org.example.quickclothapp.payload.response.WardRobeResponse;
+import org.example.quickclothapp.payload.response.*;
 import org.example.quickclothapp.service.intf.IWardRobeService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -77,7 +74,7 @@ public class WardRobeController {
         }
     }
 
-    @Operation(summary = "Obtener Inventario de un ropero", description = "Obtiene el inventario de un ropero dado el uuid del ropero")
+    @Operation(summary = "#TODO 23 de septiembre -> Obtener Inventario de un ropero", description = "Obtiene el inventario de un ropero dado el uuid del ropero")
     @ApiResponse(responseCode = "200", description = "La lista del invetario del ropero", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = InventoryResponse.class))})
     @ApiResponse(responseCode = "400", description = "El valor mensaje retorna el mensaje de error", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = MessageResponse.class))})
     @GetMapping("/inventory/get_all")
@@ -101,7 +98,7 @@ public class WardRobeController {
         }
     }
 
-    @Operation(summary = "Crear Venta", description = """
+    @Operation(summary = "#TODO 22 de septiembre ->  Crear Venta", description = """
             Crea una venta para un ropero dado el uuid del ropero y la lista de prendas\s
             Para tener en cuenta: 1. si el valor de payPoints es true, se pagara con puntos""")
     @ApiResponse(responseCode = "200", description = "El valor uuid retorna el uuid de la venta creada", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = MessageResponse.class))})
@@ -115,7 +112,7 @@ public class WardRobeController {
         }
     }
 
-    @Operation(summary = "Validar venta", description = "Valida la venta antes de emitirse, retornando el valor de la venta y los descuentos por campaña " +
+    @Operation(summary = "#TODO 22 de septiembre -> Validar venta antes de crear venta", description = "Valida la venta antes de emitirse, retornando el valor de la venta y los descuentos por campaña " +
             "Para tener en cuenta: 1. si el valor de payPoints es true, se pagara con puntos ")
     @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = SaleResponse.class))})
     @ApiResponse(responseCode = "400", description = "El valor mensaje retorna el mensaje de error", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = MessageResponse.class))})
@@ -124,6 +121,30 @@ public class WardRobeController {
         try {
             return ResponseEntity.ok(wardRopeService.checkValueSale(sale, payPoints));
         } catch (DataServiceException | WardRopeServiceExpetion e) {
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage(), null, null));
+        }
+    }
+
+    @Operation(summary = "#TODO: 23 de septiembre -> Obtener Ventas", description = "Obtiene todas las ventas dado el uuid del ropero")
+    @ApiResponse(responseCode = "200", description = "La lista de ventas, el atributo saleList siembre sera nulo", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = SaleWardRobeResponse.class))})
+    @ApiResponse(responseCode = "400", description = "El valor mensaje retorna el mensaje de error", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = MessageResponse.class))})
+    @GetMapping("/sale/get_all")
+    public ResponseEntity<?> getAllSales(@RequestParam UUID wardRopeUuid) {
+        try {
+            return ResponseEntity.ok(wardRopeService.findSalesByWardRopeUuid(wardRopeUuid));
+        } catch (DataServiceException e) {
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage(), null, null));
+        }
+    }
+
+    @Operation(summary = "#TODO: 23 de septiembre -> Obtener Venta", description = "Obtiene una venta dado el uuid de la venta")
+    @ApiResponse(responseCode = "200", description = "Entidad de la venta, el atributo", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = SaleWardRobeResponse.class))})
+    @ApiResponse(responseCode = "400", description = "El valor mensaje retorna el mensaje de error", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = MessageResponse.class))})
+    @GetMapping("/sale/get")
+    public ResponseEntity<?> getSale(@RequestParam UUID saleuuid) {
+        try {
+            return ResponseEntity.ok(wardRopeService.findSaleByUuid(saleuuid));
+        } catch (DataServiceException e) {
             return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage(), null, null));
         }
     }

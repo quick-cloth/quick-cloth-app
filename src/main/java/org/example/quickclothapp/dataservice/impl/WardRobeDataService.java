@@ -196,4 +196,23 @@ public class WardRobeDataService implements IWardRopeDataService {
             throw new DataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
         }
     }
+
+    @Override
+    public List<SaleList> findSaleListBySaleUuid(UUID uuid) throws DataServiceException {
+        try{
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(apiServerUrl + "ward_rope/sale_list/get_all")
+                    .queryParam("saleUuid", uuid);
+
+            ResponseEntity<SaleList[]> responseEntity = restTemplate.exchange(
+                    builder.toUriString(),
+                    HttpMethod.GET,
+                    null,
+                    SaleList[].class);
+
+            return List.of(responseEntity.getBody());
+        }
+        catch (HttpClientErrorException e){
+            throw new DataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
+        }
+    }
 }
