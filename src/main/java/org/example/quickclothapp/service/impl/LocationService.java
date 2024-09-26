@@ -33,6 +33,7 @@ public class LocationService implements ILocationService {
 
         for(City city : cities){
             cityResponses.add(CityResponse.builder()
+                            .uuid(city.getUuid())
                             .name(city.getName())
                             .departmentUuid(city.getDepartment().getUuid())
                     .build());

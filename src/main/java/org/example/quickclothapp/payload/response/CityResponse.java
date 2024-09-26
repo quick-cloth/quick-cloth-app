@@ -10,6 +10,7 @@ import java.util.UUID;
 @Setter
 @Builder
 public class CityResponse {
+    private UUID uuid;
     private String name;
     private UUID departmentUuid;
 }
