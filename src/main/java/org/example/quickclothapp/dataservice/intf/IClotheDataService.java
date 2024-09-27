@@ -17,4 +17,6 @@ public interface IClotheDataService {
     List<TypeStage> findAllTypeStage() throws DataServiceException;
     List<TypeGender> findAllTypeGender() throws DataServiceException;
     List<TypeClothe> findAllTypeClothe() throws DataServiceException;
+    Clothe findClotheByAllTypes(Clothe clothe) throws DataServiceException;
+    Clothe saveClothe(Clothe build) throws DataServiceException;
 }

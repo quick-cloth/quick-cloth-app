@@ -32,6 +32,9 @@ public class UserService implements IUserService {
     @Value("${api-server-rol-client}")
     private String clientRol;
 
+    @Value("${api-server-rol-donor}")
+    private String donorRol;
+
     @Value("${api-server-rol-foundation-employee}")
     private String foundationEmployeeRol;
 
@@ -70,6 +73,31 @@ public class UserService implements IUserService {
         validateUserInsert(user);
 
         Role role = userDataService.findRoleByName(clientRol);
+        TypeDocument typeDocument = userDataService.findTypeDocumentByUuid(user.getTypeDocumentUuid());
+
+        User newUser = User.builder()
+                .uuid(UUID.randomUUID())
+                .name(user.getName())
+                .last_name(user.getLastName())
+                .user_name(user.getUserName())
+                .email(user.getEmail())
+                .phone(user.getPhone())
+                .points(0)
+                .creation_date(LocalDate.now())
+                .document(new BigInteger(user.getDocumentNumber()))
+                .type_document(typeDocument)
+                .role(role)
+                .build();
+
+        userDataService.saveUserClient(newUser);
+        return new MessageResponse("User created successfully", 200, newUser.getUuid());
+    }
+
+    @Override
+    public MessageResponse saveUserDonor(UserRequest user) throws DataServiceException {
+        validateUserInsert(user);
+
+        Role role = userDataService.findRoleByName(donorRol);
         TypeDocument typeDocument = userDataService.findTypeDocumentByUuid(user.getTypeDocumentUuid());
 
         User newUser = User.builder()
@@ -216,6 +244,11 @@ public class UserService implements IUserService {
                 .email(bankEmployee.getUser().getEmail())
                 .clotheBankUuid(bankEmployee.getClotheBank().getUuid())
                 .build();
+    }
+
+    @Override
+    public List<TypeDocument> findAllTypeDocument() throws DataServiceException {
+        return userDataService.findAllTypeDocument();
     }
 
     private void validateUserInsert(UserRequest userRequest) throws DataServiceException {

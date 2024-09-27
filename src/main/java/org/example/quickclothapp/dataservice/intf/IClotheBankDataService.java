@@ -1,9 +1,7 @@
 package org.example.quickclothapp.dataservice.intf;
 
 import org.example.quickclothapp.exception.DataServiceException;
-import org.example.quickclothapp.model.Campaign;
-import org.example.quickclothapp.model.ClotheBank;
-import org.example.quickclothapp.model.TypeCampaign;
+import org.example.quickclothapp.model.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -16,4 +14,9 @@ public interface IClotheBankDataService {
     TypeCampaign findTypeCampaignByUuid(UUID typeCampaignUuid) throws DataServiceException;
     List<Campaign> findCampaignsByClotheBankUuid(UUID uuid, LocalDate startDate, LocalDate endDate) throws DataServiceException;
     List<TypeCampaign> findAllTypeCampaign() throws DataServiceException;
+    Donation saveDonation(Donation donation) throws DataServiceException;
+    List<Donation> findDonationByClotheBankUuid(UUID clotheBankUuid) throws DataServiceException;
+    List<Order> findOrdersByClotheBankUuid(UUID clotheBankUuid, UUID orderStateUuid, UUID wardRobeUuid) throws DataServiceException;
+    List<OrderList> findOrderListByOrder(UUID orderUuid) throws DataServiceException;
+    Order findOrderByUuid(UUID orderUuid) throws DataServiceException;
 }

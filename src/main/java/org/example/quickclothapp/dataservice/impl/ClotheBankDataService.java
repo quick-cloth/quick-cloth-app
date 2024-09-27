@@ -2,9 +2,7 @@ package org.example.quickclothapp.dataservice.impl;
 
 import org.example.quickclothapp.dataservice.intf.IClotheBankDataService;
 import org.example.quickclothapp.exception.DataServiceException;
-import org.example.quickclothapp.model.Campaign;
-import org.example.quickclothapp.model.ClotheBank;
-import org.example.quickclothapp.model.TypeCampaign;
+import org.example.quickclothapp.model.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -125,6 +123,90 @@ public class ClotheBankDataService implements IClotheBankDataService {
             return List.of(responseEntity.getBody());
         }
         catch (HttpClientErrorException e){
+            throw new DataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
+        }
+    }
+
+    @Override
+    public Donation saveDonation(Donation donation) throws DataServiceException {
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+
+            HttpEntity<Donation> request = new HttpEntity<>(donation, headers);
+
+            ResponseEntity<Donation> responseEntity = restTemplate.exchange(
+                    apiServerUrl + "clothe_bank/donation/save",
+                    HttpMethod.POST,
+                    request,
+                    Donation.class);
+
+            return responseEntity.getBody();
+        }
+        catch (HttpClientErrorException e){
+            throw new DataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
+        }
+    }
+
+    @Override
+    public List<Donation> findDonationByClotheBankUuid(UUID clotheBankUuid) throws DataServiceException {
+        try {
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(apiServerUrl + "clothe_bank/donation/get_all/clothe_bank")
+                    .queryParam("clotheBankUuid", clotheBankUuid);
+
+            ResponseEntity<Donation[]> responseEntity = restTemplate.getForEntity(builder.toUriString(), Donation[].class);
+
+            return List.of(responseEntity.getBody());
+        }
+        catch (HttpClientErrorException e){
+            throw new DataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
+        }
+    }
+
+    @Override
+    public List<Order> findOrdersByClotheBankUuid(UUID clotheBankUuid, UUID orderStateUuid, UUID wardRobeUuid) throws DataServiceException {
+        try {
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(apiServerUrl + "clothe_bank/order/get_all")
+                    .queryParam("clotheBankUuid", clotheBankUuid);
+
+            if (orderStateUuid != null){
+                builder.queryParam("orderStateUuid", orderStateUuid);
+            }
+            if (wardRobeUuid != null){
+                builder.queryParam("wardRobeUuid", wardRobeUuid);
+            }
+
+            ResponseEntity<Order[]> responseEntity = restTemplate.getForEntity(builder.toUriString(), Order[].class);
+
+            return List.of(responseEntity.getBody());
+        }
+        catch (HttpClientErrorException e){
+            throw new DataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
+        }
+    }
+
+    @Override
+    public List<OrderList> findOrderListByOrder(UUID orderUuid) throws DataServiceException {
+        try {
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(apiServerUrl + "clothe_bank/order_list/get_all")
+                    .queryParam("orderUuid", orderUuid);
+
+            ResponseEntity<OrderList[]> responseEntity = restTemplate.getForEntity(builder.toUriString(), OrderList[].class);
+
+            return List.of(responseEntity.getBody());
+        } catch (HttpClientErrorException e) {
+            throw new DataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
+        }
+    }
+
+    @Override
+    public Order findOrderByUuid(UUID orderUuid) throws DataServiceException {
+        try {
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(apiServerUrl + "clothe_bank/order/get")
+                    .queryParam("orderUuid", orderUuid);
+
+            return restTemplate.getForObject(builder.toUriString(), Order.class);
+        } catch (HttpClientErrorException e) {
             throw new DataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
         }
     }

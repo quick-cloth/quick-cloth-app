@@ -5,15 +5,17 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.example.quickclothapp.exception.DataServiceException;
+import org.example.quickclothapp.model.Clothe;
 import org.example.quickclothapp.model.TypeClothe;
 import org.example.quickclothapp.model.TypeGender;
 import org.example.quickclothapp.model.TypeStage;
+import org.example.quickclothapp.payload.request.DonationRequest;
 import org.example.quickclothapp.payload.response.MessageResponse;
 import org.example.quickclothapp.service.intf.IClotheService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/application/clothe")
@@ -22,6 +24,19 @@ public class ClotheController {
 
     public ClotheController(IClotheService clotheService) {
         this.clotheService = clotheService;
+    }
+
+    @Operation(summary = "#TODO: 26 de septiembre -> Obtener una prenda por todos los tipos")
+    @ApiResponse(responseCode = "200", description = "La prenda", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Clothe.class))})
+    @ApiResponse(responseCode = "400", description = "El valor mensaje retorna el mensaje de error", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = MessageResponse.class))})
+    @GetMapping("/get")
+    public ResponseEntity<?> getClotheByAllTypes(@RequestParam UUID typeClotheUuid, @RequestParam UUID typeGenderUuid, @RequestParam UUID typeStageUuid) {
+        try {
+            return ResponseEntity.ok(clotheService.findClotheByAllTypes(typeClotheUuid, typeGenderUuid, typeStageUuid));
+        } catch (DataServiceException e) {
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage(), e.getStatusCode(), null));
+        }
+
     }
 
     @Operation(summary = "#TODO: 22 de septiembre -> Obtener todos los tipos de etapas")

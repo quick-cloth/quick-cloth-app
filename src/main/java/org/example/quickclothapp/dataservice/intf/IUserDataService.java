@@ -23,6 +23,6 @@ public interface IUserDataService {
     User saveUserWardropeEmployee(WardrobeEmployeeRequest wer) throws DataServiceException;
     List<User> findAllUsersByRol(String name) throws DataServiceException;
     WardRobeEmployee findWarRobeEmployeeByUsername(String username) throws DataServiceException;
-
     BankEmployee findBankEmployeeByUsername(String username) throws DataServiceException;
+    List<TypeDocument> findAllTypeDocument() throws DataServiceException;
 }

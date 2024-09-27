@@ -11,8 +11,9 @@ import java.util.UUID;
 @Setter
 @Builder
 public class InventoryResponse {
-    private Integer totalStock;
-    private String clotheName;
-    private List<String> typeGenderList;
-    private List<TypeStageResponse> typeStageResponses;
+    private UUID uuid;
+    private String clothName;
+    private String clothGender;
+    private String clothStage;
+    private Integer stock;
 }

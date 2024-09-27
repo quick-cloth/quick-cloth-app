@@ -245,4 +245,16 @@ public class UserDataService implements IUserDataService {
             throw new DataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
         }
     }
+
+    @Override
+    public List<TypeDocument> findAllTypeDocument() throws DataServiceException {
+        try {
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(apiServerUrl + "user/type_document/get_all");
+
+            return List.of(restTemplate.getForObject(builder.toUriString(), TypeDocument[].class));
+        }
+        catch (HttpClientErrorException e){
+            throw new DataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
+        }
+    }
 }

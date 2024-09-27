@@ -7,6 +7,7 @@ import org.example.quickclothapp.model.TypeClothe;
 import org.example.quickclothapp.model.TypeGender;
 import org.example.quickclothapp.model.TypeStage;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -108,6 +109,48 @@ public class ClotheDataService implements IClotheDataService {
             UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(apiServerUrl + "clothe/type_clothe/get_all");
 
             return List.of(restTemplate.getForObject(builder.toUriString(), TypeClothe[].class));
+        }
+        catch (HttpClientErrorException e){
+            throw new DataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
+        }
+    }
+
+    @Override
+    public Clothe findClotheByAllTypes(Clothe clothe) throws DataServiceException {
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+
+            HttpEntity<Clothe> request = new HttpEntity<>(clothe, headers);
+
+            ResponseEntity<Clothe> responseEntity = restTemplate.exchange(
+                    apiServerUrl + "clothe/get_by_all_types",
+                    HttpMethod.POST,
+                    request,
+                    Clothe.class);
+
+            return responseEntity.getBody();
+        }
+        catch (HttpClientErrorException e){
+            throw new DataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
+        }
+    }
+
+    @Override
+    public Clothe saveClothe(Clothe build) throws DataServiceException {
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+
+            HttpEntity<Clothe> request = new HttpEntity<>(build, headers);
+
+            ResponseEntity<Clothe> responseEntity = restTemplate.exchange(
+                    apiServerUrl + "clothe/save",
+                    HttpMethod.POST,
+                    request,
+                    Clothe.class);
+
+            return responseEntity.getBody();
         }
         catch (HttpClientErrorException e){
             throw new DataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());

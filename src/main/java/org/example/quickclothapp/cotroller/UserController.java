@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.example.quickclothapp.exception.DataServiceException;
+import org.example.quickclothapp.model.TypeDocument;
 import org.example.quickclothapp.payload.request.UserRequest;
 import org.example.quickclothapp.payload.response.MessageResponse;
 import org.example.quickclothapp.payload.response.UserResponse;
@@ -23,6 +24,9 @@ public class UserController {
         this.userService = userService;
     }
 
+    @Operation(summary = "#TODO: 26 de septiembre -> Guardar cliente", description = "Guarda un nuevo cliente")
+    @ApiResponse(responseCode = "200", description = "El valor mensaje retorna el mensaje de exito", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = MessageResponse.class))})
+    @ApiResponse(responseCode = "400", description = "El valor mensaje retorna el mensaje de error", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = MessageResponse.class))})
     @PostMapping("/save/client")
     public ResponseEntity<?> getUser(@RequestBody UserRequest user) {
         try {
@@ -32,6 +36,21 @@ public class UserController {
         }
     }
 
+    @Operation(summary = "#TODO: 26 de septiembre -> Guardar donante", description = "Guarda un nuevo donante")
+    @ApiResponse(responseCode = "200", description = "El valor mensaje retorna el mensaje de exito", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = MessageResponse.class))})
+    @ApiResponse(responseCode = "400", description = "El valor mensaje retorna el mensaje de error", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = MessageResponse.class))})
+    @PostMapping("/save/donor")
+    public ResponseEntity<?> saveUserDonor(@RequestBody UserRequest user) {
+        try {
+            return ResponseEntity.ok(userService.saveUserDonor(user));
+        } catch (DataServiceException e) {
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage(), e.getStatusCode(), null));
+        }
+    }
+
+    @Operation(summary = "#TODO: 26 de septiembre -> Guardar empleado de fundacion", description = "Guarda un nuevo empleado de fundacion")
+    @ApiResponse(responseCode = "200", description = "El valor mensaje retorna el mensaje de exito", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = MessageResponse.class))})
+    @ApiResponse(responseCode = "400", description = "El valor mensaje retorna el mensaje de error", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = MessageResponse.class))})
     @PostMapping("/save/foundation")
     public ResponseEntity<?> saveUserFoundation(@RequestBody UserRequest user, @RequestParam UUID foundationUuid) {
         try {
@@ -40,6 +59,10 @@ public class UserController {
             return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage(), e.getStatusCode(), null));
         }
     }
+
+    @Operation(summary = "#TODO: 26 de septiembre -> Guardar empleado de banco", description = "Guarda un nuevo empleado de banco")
+    @ApiResponse(responseCode = "200", description = "El valor mensaje retorna el mensaje de exito", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = MessageResponse.class))})
+    @ApiResponse(responseCode = "400", description = "El valor mensaje retorna el mensaje de error", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = MessageResponse.class))})
 
     @PostMapping("/save/bank")
     public ResponseEntity<?> saveUserBank(@RequestBody UserRequest user, @RequestParam UUID clotheBankUuid) {
@@ -50,6 +73,9 @@ public class UserController {
         }
     }
 
+    @Operation(summary = "#TODO: 26 de septiembre -> Guardar empleado de ropero", description = "Guarda un nuevo empleado de ropero")
+    @ApiResponse(responseCode = "200", description = "El valor mensaje retorna el mensaje de exito", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = MessageResponse.class))})
+    @ApiResponse(responseCode = "400", description = "El valor mensaje retorna el mensaje de error", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = MessageResponse.class))})
     @PostMapping("/save/wardrope")
     public ResponseEntity<?> saveUserWardrope(@RequestBody UserRequest user, @RequestParam UUID wardRopeUuid) {
         try {
@@ -59,6 +85,9 @@ public class UserController {
         }
     }
 
+    @Operation(summary = "#TODO: 26 de septiembre -> Obtener un cliente por numero de identificacion")
+    @ApiResponse(responseCode = "200", description = "Entidad del usuario con el uuid del cliente", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = UserResponse.class))})
+    @ApiResponse(responseCode = "400", description = "El valor mensaje retorna el mensaje de error", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = MessageResponse.class))})
     @GetMapping("/get/identification")
     public ResponseEntity<?> getUser(@RequestParam String identification) {
         try {
@@ -87,6 +116,18 @@ public class UserController {
     public ResponseEntity<?> getBankEmployeeByUsername(@RequestParam String username) {
         try {
             return ResponseEntity.ok(userService.findBankEmployeeByUsername(username));
+        } catch (DataServiceException e) {
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage(), null, null));
+        }
+    }
+
+    @Operation(summary = "#TODO: 26 de septiembre -> Obtener todos los tipos de documento")
+    @ApiResponse(responseCode = "200", description = "La lista de tipos de documento", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = TypeDocument.class))})
+    @ApiResponse(responseCode = "400", description = "El valor mensaje retorna el mensaje de error", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = MessageResponse.class))})
+    @GetMapping("/get_all/type_document")
+    public ResponseEntity<?> getAllTypeDocument() {
+        try {
+            return ResponseEntity.ok(userService.findAllTypeDocument());
         } catch (DataServiceException e) {
             return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage(), null, null));
         }

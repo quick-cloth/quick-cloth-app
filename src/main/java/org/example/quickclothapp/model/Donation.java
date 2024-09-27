@@ -2,7 +2,6 @@ package org.example.quickclothapp.model;
 
 import lombok.*;
 
-import java.math.BigInteger;
 import java.time.LocalDate;
 import java.util.UUID;
 
@@ -11,11 +10,11 @@ import java.util.UUID;
 @NoArgsConstructor
 @Getter
 @Setter
-public class Sale {
+public class Donation {
     private UUID uuid;
-    private BigInteger value;
-    private LocalDate sale_date;
-    private Wardrobe wardrobe;
+    private LocalDate creation_date;
+    private ClotheBank clothe_bank;
     private User user;
-    private Integer pay_points;
+    private Clothe clothe;
+    private Integer quantity;
 }

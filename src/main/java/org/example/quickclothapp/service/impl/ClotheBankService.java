@@ -2,22 +2,22 @@ package org.example.quickclothapp.service.impl;
 
 import org.example.quickclothapp.dataservice.intf.IClotheBankDataService;
 import org.example.quickclothapp.dataservice.intf.ILocationDataService;
+import org.example.quickclothapp.dataservice.intf.IWardRopeDataService;
 import org.example.quickclothapp.exception.ClotheBankServiceException;
 import org.example.quickclothapp.exception.DataServiceException;
 import org.example.quickclothapp.model.*;
-import org.example.quickclothapp.payload.request.CampaignRequest;
-import org.example.quickclothapp.payload.request.ClotheBankRequest;
-import org.example.quickclothapp.payload.request.EmailRequest;
+import org.example.quickclothapp.payload.request.*;
 import org.example.quickclothapp.payload.response.CampaignResponse;
+import org.example.quickclothapp.payload.response.DonationResponse;
 import org.example.quickclothapp.payload.response.MessageResponse;
+import org.example.quickclothapp.payload.response.OrderResponse;
 import org.example.quickclothapp.service.intf.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class ClotheBankService implements IClotheBankService {
@@ -26,14 +26,19 @@ public class ClotheBankService implements IClotheBankService {
     private final IClotheService clotheService;
     private final IUserService userService;
     private final IEmailService emailService;
+    private final IWardRopeDataService wardRopeDataService;
+
+    @Value("${api-server-order-state-on-way}")
+    private String orderStateOnWay;
 
 
-    public ClotheBankService(IClotheBankDataService clotheBankDataService, ILocationDataService locationDataService, IClotheService clotheService, IUserService userService, IEmailService emailService) {
+    public ClotheBankService(IClotheBankDataService clotheBankDataService, ILocationDataService locationDataService, IClotheService clotheService, IUserService userService, IEmailService emailService, IWardRopeDataService wardRopeDataService) {
         this.clotheBankDataService = clotheBankDataService;
         this.locationDataService = locationDataService;
         this.clotheService = clotheService;
         this.userService = userService;
         this.emailService = emailService;
+        this.wardRopeDataService = wardRopeDataService;
     }
 
     @Override
@@ -142,5 +147,115 @@ public class ClotheBankService implements IClotheBankService {
                     .build();
             emailService.sendEmailNewCampaign(er, us, campaign);
         }
+    }
+
+    @Override
+    public MessageResponse saveDonation(DonationRequest donationRequest) throws DataServiceException{
+        ClotheBank clotheBank = clotheBankDataService.findClotheBankByUuid(donationRequest.getClotheBankUuid());
+        User user = null;
+        if (donationRequest.getUserUuid() != null){
+            user = userService.findUserByUuid(donationRequest.getUserUuid());
+        }
+
+        Clothe clothe = null;
+
+        clothe = clotheService.findClotheByAllTypes(
+                donationRequest.getTypeClotheUuid(),
+                donationRequest.getTypeGenderUuid(),
+                donationRequest.getTypeStageUuid()
+        );
+
+
+        if (clothe == null){
+            clothe = clotheService.saveClothe(
+                    donationRequest.getTypeClotheUuid(),
+                    donationRequest.getTypeGenderUuid(),
+                    donationRequest.getTypeStageUuid()
+            );
+        }
+
+        Donation donation = Donation.builder()
+                .uuid(UUID.randomUUID())
+                .clothe_bank(clotheBank)
+                .clothe(clothe)
+                .user(user)
+                .creation_date(LocalDate.now())
+                .quantity(donationRequest.getQuantity())
+                .build();
+
+        clotheBankDataService.saveDonation(donation);
+
+        return new MessageResponse("Donation saved successfully", null, donation.getUuid());
+    }
+
+    @Override
+    public List<DonationResponse> findDonationByClotheBankUuid(UUID clotheBankUuid) throws DataServiceException {
+        List<Donation> donations = clotheBankDataService.findDonationByClotheBankUuid(clotheBankUuid);
+
+        List<DonationResponse> danationResponses = new ArrayList<>();
+
+        for(Donation d : donations){
+            DonationResponse dr = DonationResponse.builder()
+                    .uuid(d.getUuid())
+                    .donationDate(d.getCreation_date())
+                    .quantity(d.getQuantity())
+                    .donorName(d.getUser() != null ? d.getUser().getName() : "Anonimo")
+                    .build();
+            danationResponses.add(dr);
+        }
+
+        return danationResponses;
+    }
+
+    @Override
+    public List<OrderResponse> findOrdersByClotheBankUuid(UUID clotheBankUuid, UUID orderStateUuid, UUID wardRobeUuid) throws DataServiceException {
+        List<Order> orders = clotheBankDataService.findOrdersByClotheBankUuid(clotheBankUuid, orderStateUuid, wardRobeUuid);
+        List<OrderResponse> orderResponses = new ArrayList<>();
+
+        for (Order o : orders){
+            List<OrderList> orderList = clotheBankDataService.findOrderListByOrder(o.getUuid());
+            int quantity = orderList.stream().mapToInt(OrderList::getValue_order).sum();
+            orderResponses.add(
+                    OrderResponse.builder()
+                            .uuid(o.getUuid())
+                            .quantity(quantity)
+                            .wardrobeName(o.getWardrobe().getName())
+                            .orderDate(o.getOrder_date())
+                            .status(o.getOrderState().getName())
+                            .build()
+            );
+        }
+
+        return orderResponses;
+    }
+
+    @Override
+    public MessageResponse responseOrder(OrderRequest orderRequest, UUID orderUuid) throws DataServiceException {
+        Order order = clotheBankDataService.findOrderByUuid(orderUuid);
+        OrderState orderState = wardRopeDataService.findOrderStateByName(orderStateOnWay);
+
+        Map<UUID, Integer> mapClothesRequest = new HashMap<>();
+
+        List<OrderList> orderList = clotheBankDataService.findOrderListByOrder(order.getUuid());
+
+        for(ClotheRequest cl : orderRequest.getClothes()){
+            mapClothesRequest.put(cl.getClotheUuid(), cl.getQuantity());
+        }
+
+        for (OrderList orl : orderList){
+            int quantity = mapClothesRequest.get(orl.getClothe().getUuid());
+            orl.setDelivery_value(quantity);
+        }
+
+        order.setOrderState(orderState);
+
+        OrderDataRequest orderDataRequest = OrderDataRequest.builder()
+                .order(order)
+                .orderList(orderList)
+                .build();
+
+        wardRopeDataService.saveOrder(orderDataRequest);
+
+        return new MessageResponse("Order response successfully with state : " + orderStateOnWay, null, order.getUuid());
     }
 }

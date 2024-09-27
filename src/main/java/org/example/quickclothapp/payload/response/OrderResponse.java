@@ -3,7 +3,6 @@ package org.example.quickclothapp.payload.response;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -11,11 +10,10 @@ import java.util.UUID;
 @Getter
 @Setter
 @Builder
-public class SaleWardRobeResponse {
+public class OrderResponse {
     private UUID uuid;
-    private LocalDate date;
+    private String wardrobeName;
+    private LocalDate orderDate;
     private Integer quantity;
-    private String price;
-    private String payPoints;
-    private List<SaleListWardRobeResponse> saleList;
+    private String status;
 }

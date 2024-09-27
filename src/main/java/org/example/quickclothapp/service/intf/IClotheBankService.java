@@ -7,8 +7,12 @@ import org.example.quickclothapp.model.ClotheBank;
 import org.example.quickclothapp.model.TypeCampaign;
 import org.example.quickclothapp.payload.request.CampaignRequest;
 import org.example.quickclothapp.payload.request.ClotheBankRequest;
+import org.example.quickclothapp.payload.request.DonationRequest;
+import org.example.quickclothapp.payload.request.OrderRequest;
 import org.example.quickclothapp.payload.response.CampaignResponse;
+import org.example.quickclothapp.payload.response.DonationResponse;
 import org.example.quickclothapp.payload.response.MessageResponse;
+import org.example.quickclothapp.payload.response.OrderResponse;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -21,4 +25,8 @@ public interface IClotheBankService {
     List<Campaign> findCampaignsByClotheBankUuid(UUID uuid) throws DataServiceException;
     List<CampaignResponse> findAllCampaignsByClotheBankUuid(UUID clotheBankUuid, LocalDate startDate, LocalDate endDate) throws DataServiceException;
     List<TypeCampaign> findAllTypeCampaign() throws DataServiceException;
+    MessageResponse saveDonation(DonationRequest donationRequest) throws DataServiceException;
+    List<DonationResponse> findDonationByClotheBankUuid(UUID clotheBankUuid) throws DataServiceException;
+    List<OrderResponse> findOrdersByClotheBankUuid(UUID clotheBankUuid, UUID orderStateUuid, UUID wardRobeUuid) throws DataServiceException;
+    MessageResponse responseOrder(OrderRequest orderRequest, UUID orderUuid) throws DataServiceException;
 }

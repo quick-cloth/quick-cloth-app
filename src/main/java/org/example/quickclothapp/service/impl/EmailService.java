@@ -76,7 +76,8 @@ public class EmailService implements IEmailService {
             context.setVariable("saleLists", saleLists);
             context.setVariable("campaignList", campaignList);
             context.setVariable("totalDiscount", campaignList.stream().mapToDouble(CampaignResponse::getValueDiscount).sum());
-            context.setVariable("totalValue", saleLists.stream().mapToDouble(SaleList::getValue).sum());
+            context.setVariable("totalValue", sale.getValue());
+            context.setVariable("payPoints", sale.getPay_points() *-1);
             context.setVariable("total_points", sale.getUser().getPoints());
 
             String html = templateEngine.process("sale-receipt-template", context);

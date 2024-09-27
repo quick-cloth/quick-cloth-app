@@ -2,11 +2,10 @@ package org.example.quickclothapp.service.impl;
 
 import org.example.quickclothapp.dataservice.intf.IClotheDataService;
 import org.example.quickclothapp.exception.DataServiceException;
-import org.example.quickclothapp.model.Clothe;
-import org.example.quickclothapp.model.TypeClothe;
-import org.example.quickclothapp.model.TypeGender;
-import org.example.quickclothapp.model.TypeStage;
+import org.example.quickclothapp.model.*;
+import org.example.quickclothapp.payload.request.DonationRequest;
 import org.example.quickclothapp.service.intf.IClotheService;
+import org.example.quickclothapp.service.intf.IUserService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,9 +15,11 @@ import java.util.UUID;
 public class ClotheService implements IClotheService {
 
     private final IClotheDataService clotheDataService;
+    private final IUserService userService;
 
-    public ClotheService(IClotheDataService clotheDataService) {
+    public ClotheService(IClotheDataService clotheDataService, IUserService userService) {
         this.clotheDataService = clotheDataService;
+        this.userService = userService;
     }
 
     @Override
@@ -54,5 +55,36 @@ public class ClotheService implements IClotheService {
     @Override
     public List<TypeClothe> findAllTypeClothe() throws DataServiceException {
         return clotheDataService.findAllTypeClothe();
+    }
+
+    @Override
+    public Clothe findClotheByAllTypes(UUID typeClotheUuid, UUID typeGenderUuid, UUID typeStageUuid) throws DataServiceException{
+        TypeClothe typeClothe = clotheDataService.findTypeClotheByUuid(typeClotheUuid);
+        TypeGender typeGender = clotheDataService.findTypeGenderByUuid(typeGenderUuid);
+        TypeStage typeStage = clotheDataService.findTypeStageByUuid(typeStageUuid);
+
+        Clothe clothe = Clothe.builder()
+                .typeClothe(typeClothe)
+                .typeGender(typeGender)
+                .typeStage(typeStage)
+                .build();
+
+        return clotheDataService.findClotheByAllTypes(clothe);
+    }
+
+    @Override
+    public Clothe saveClothe(UUID typeClotheUuid, UUID typeGenderUuid, UUID typeStageUuid) throws DataServiceException {
+        TypeClothe typeClothe = clotheDataService.findTypeClotheByUuid(typeClotheUuid);
+        TypeGender typeGender = clotheDataService.findTypeGenderByUuid(typeGenderUuid);
+        TypeStage typeStage = clotheDataService.findTypeStageByUuid(typeStageUuid);
+
+        Clothe clothe = Clothe.builder()
+                .uuid(UUID.randomUUID())
+                .typeClothe(typeClothe)
+                .typeGender(typeGender)
+                .typeStage(typeStage)
+                .build();
+
+        return clotheDataService.saveClothe(clothe);
     }
 }

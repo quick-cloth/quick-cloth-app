@@ -1,10 +1,8 @@
 package org.example.quickclothapp.service.intf;
 
 import org.example.quickclothapp.exception.DataServiceException;
-import org.example.quickclothapp.model.Clothe;
-import org.example.quickclothapp.model.TypeClothe;
-import org.example.quickclothapp.model.TypeGender;
-import org.example.quickclothapp.model.TypeStage;
+import org.example.quickclothapp.model.*;
+import org.example.quickclothapp.payload.request.DonationRequest;
 
 import java.util.List;
 import java.util.UUID;
@@ -17,4 +15,6 @@ public interface IClotheService {
     List<TypeStage> findAllTypeStage() throws DataServiceException;
     List<TypeGender> findAllTypeGender() throws DataServiceException;
     List<TypeClothe> findAllTypeClothe() throws DataServiceException;
+    Clothe findClotheByAllTypes(UUID typeClotheUuid, UUID typeGenderUuid, UUID typeStageUuid) throws DataServiceException;
+    Clothe saveClothe(UUID typeClotheUuid, UUID typeGenderUuid, UUID typeStageUuid) throws DataServiceException;
 }

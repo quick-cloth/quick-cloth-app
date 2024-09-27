@@ -77,7 +77,6 @@ public class WardRobeService implements IWardRobeService {
             }
         }
 
-        boolean isAllSaleDiscounted = true;
         LocalDate currentDate = LocalDate.now();
 
         List<SaleListResponse> saleListResponses = new ArrayList<>();
@@ -97,29 +96,50 @@ public class WardRobeService implements IWardRobeService {
             saleListResponses.add(slr);
         }
 
-        for (Campaign c : campaigns) {
-            if (currentDate.isBefore(c.getEnd_date())) {
-                for (SaleListResponse slr : saleListResponses) {
-                    if (c.getTypeClothe() != null) {
-                        if (slr.getClotheName().equals(c.getTypeClothe().getName())) {
+        for (SaleListResponse slr : saleListResponses){
+
+            for(Campaign c : campaigns){
+                if (currentDate.isBefore(c.getEnd_date())){
+
+                    if(c.getTypeClothe() != null && c.getTypeGender() != null && c.getTypeStage() != null){
+                        if(slr.getClotheName().equals(c.getTypeClothe().getName()) && slr.getTypeGenderName().equals(c.getTypeGender().getName()) && slr.getTypeStageName().equals(c.getTypeStage().getName())){
                             calculateDiscount(slr, c);
-                            isAllSaleDiscounted = false;
                         }
                     }
-                    if (c.getTypeGender() != null) {
-                        if (slr.getTypeGenderName().equals(c.getTypeGender().getName())) {
+                    if (c.getTypeClothe() == null &&  c.getTypeGender() != null && c.getTypeStage() != null){
+                        if(slr.getTypeGenderName().equals(c.getTypeGender().getName()) && slr.getTypeStageName().equals(c.getTypeStage().getName())){
                             calculateDiscount(slr, c);
-                            isAllSaleDiscounted = false;
+                        }
+
+                    }
+                    if(c.getTypeClothe() != null && c.getTypeGender() == null && c.getTypeStage() != null){
+                        if(slr.getClotheName().equals(c.getTypeClothe().getName()) && slr.getTypeStageName().equals(c.getTypeStage().getName())){
+                            calculateDiscount(slr, c);
+                        }
+
+                    }
+                    if(c.getTypeClothe() == null && c.getTypeGender() == null && c.getTypeStage() == null){
+                        calculateDiscount(slr, c);
+                    }
+                    if(c.getTypeClothe() != null && c.getTypeGender() != null && c.getTypeStage() == null){
+                        if(slr.getClotheName().equals(c.getTypeClothe().getName()) && slr.getTypeGenderName().equals(c.getTypeGender().getName())){
+                            calculateDiscount(slr, c);
                         }
                     }
-                    if (c.getTypeStage() != null) {
+                    if(c.getTypeClothe() == null && c.getTypeGender() != null && c.getTypeStage() == null){
+                        if(slr.getTypeGenderName().equals(c.getTypeGender().getName())){
+                            calculateDiscount(slr, c);
+                        }
+                    }
+                    if (c.getTypeClothe() != null && c.getTypeGender() == null && c.getTypeStage() == null){
+                        if(slr.getClotheName().equals(c.getTypeClothe().getName())){
+                            calculateDiscount(slr, c);
+                        }
+                    }
+                    if(c.getTypeClothe() == null && c.getTypeGender() == null && c.getTypeStage() != null) {
                         if (slr.getTypeStageName().equals(c.getTypeStage().getName())) {
                             calculateDiscount(slr, c);
-                            isAllSaleDiscounted = false;
                         }
-                    }
-                    if (isAllSaleDiscounted) {
-                        calculateDiscount(slr, c);
                     }
                 }
             }
@@ -127,20 +147,22 @@ public class WardRobeService implements IWardRobeService {
 
         double totalValue = saleListResponses.stream().mapToDouble(SaleListResponse::getValue).sum();
         double payPointsValue = 0.0;
-        int points = 0;
+        int valuePoints = 0;
 
         if (payPoints) {
-            payPointsValue = user.getPoints() * (double) AMOUNT_PER_POINT / POINTS_PER_1000;
+            valuePoints = (int) ((totalValue/AMOUNT_PER_POINT) * POINTS_PER_1000);
 
-            if (payPointsValue > totalValue) {
-                payPointsValue = payPointsValue - totalValue;
+            if (user.getPoints() > valuePoints) {
+                user.setPoints(user.getPoints() - valuePoints);
                 totalValue = 0.0;
             } else {
-                totalValue = totalValue - payPointsValue;
+                valuePoints = valuePoints - user.getPoints();
+                user.setPoints(0);
+                totalValue = totalValue - (double) (valuePoints * AMOUNT_PER_POINT) / POINTS_PER_1000;;
             }
-
-            points = (int) ((payPointsValue / AMOUNT_PER_POINT) * POINTS_PER_1000);
-            user.setPoints(user.getPoints() - points);
+        }else{
+            int newPoints = (int) ((totalValue/AMOUNT_PER_POINT) * POINTS_PER_1000);
+            user.setPoints(user.getPoints() + newPoints);
         }
 
         return SaleResponse.builder()
@@ -157,6 +179,7 @@ public class WardRobeService implements IWardRobeService {
 
         CampaignResponse cr = CampaignResponse.builder()
                 .campaignName(c.getName())
+                .description(c.getMessage_campaign())
                 .valueDiscount(discount * -1)
                 .discount(c.getDiscount())
                 .build();
@@ -168,8 +191,6 @@ public class WardRobeService implements IWardRobeService {
         Wardrobe wardRope = wardRopeDataService.findWardRopeByUuid(saleRequest.getWardRopeUuid());
         User user = userDataService.findUserByUuid(saleRequest.getUserUuid());
         List<Campaign> campaigns = clotheBankService.findCampaignsByClotheBankUuid(wardRope.getClotheBank().getUuid());
-        boolean isAllSaleDiscounted = true;
-
 
         Sale newSale = Sale.builder()
                 .uuid(UUID.randomUUID())
@@ -193,57 +214,82 @@ public class WardRobeService implements IWardRobeService {
         }
         List<CampaignResponse> campaignResponses = new ArrayList<>();
 
-        for (Campaign c : campaigns) {
-            if (newSale.getSale_date().isBefore(c.getEnd_date())) {
-                for (SaleList slr : saleLists) {
-                    if (c.getTypeClothe() != null) {
-                        if (slr.getClothe().getTypeClothe().getName().equals(c.getTypeClothe().getName())) {
-                            calculateDiscountSale(slr, c, campaignResponses);
-                            isAllSaleDiscounted = false;
+        for(SaleList sl : saleLists){
+
+            for(Campaign c : campaigns){
+                if(newSale.getSale_date().isBefore(c.getEnd_date())){
+                    if(c.getTypeClothe() != null && c.getTypeGender() != null && c.getTypeStage() != null){
+                        if(sl.getClothe().getTypeClothe().getName().equals(c.getTypeClothe().getName()) && sl.getClothe().getTypeGender().getName().equals(c.getTypeGender().getName()) && sl.getClothe().getTypeStage().getName().equals(c.getTypeStage().getName())){
+                            calculateDiscountSale(sl, c, campaignResponses);
                         }
                     }
-                    if (c.getTypeGender() != null) {
-                        if (slr.getClothe().getTypeGender().getName().equals(c.getTypeGender().getName())) {
-                            calculateDiscountSale(slr, c, campaignResponses);
-                            isAllSaleDiscounted = false;
+                    if (c.getTypeClothe() == null &&  c.getTypeGender() != null && c.getTypeStage() != null){
+                        if(sl.getClothe().getTypeGender().getName().equals(c.getTypeGender().getName()) && sl.getClothe().getTypeStage().getName().equals(c.getTypeStage().getName())){
+                            calculateDiscountSale(sl, c, campaignResponses);
+                        }
+
+                    }
+                    if(c.getTypeClothe() != null && c.getTypeGender() == null && c.getTypeStage() != null){
+                        if(sl.getClothe().getTypeClothe().getName().equals(c.getTypeClothe().getName()) && sl.getClothe().getTypeStage().getName().equals(c.getTypeStage().getName())){
+                            calculateDiscountSale(sl, c, campaignResponses);
+                        }
+
+                    }
+                    if(c.getTypeClothe() == null && c.getTypeGender() == null && c.getTypeStage() == null){
+                        calculateDiscountSale(sl, c, campaignResponses);
+                    }
+                    if(c.getTypeClothe() != null && c.getTypeGender() != null && c.getTypeStage() == null){
+                        if(sl.getClothe().getTypeClothe().getName().equals(c.getTypeClothe().getName()) && sl.getClothe().getTypeGender().getName().equals(c.getTypeGender().getName())){
+                            calculateDiscountSale(sl, c, campaignResponses);
                         }
                     }
-                    if (c.getTypeStage() != null) {
-                        if (slr.getClothe().getTypeStage().getName().equals(c.getTypeStage().getName())) {
-                            calculateDiscountSale(slr, c, campaignResponses);
-                            isAllSaleDiscounted = false;
+                    if(c.getTypeClothe() == null && c.getTypeGender() != null && c.getTypeStage() == null){
+                        if(sl.getClothe().getTypeGender().getName().equals(c.getTypeGender().getName())){
+                            calculateDiscountSale(sl, c, campaignResponses);
                         }
                     }
-                    if (isAllSaleDiscounted) {
-                        calculateDiscountSale(slr, c, campaignResponses);
+                    if (c.getTypeClothe() != null && c.getTypeGender() == null && c.getTypeStage() == null){
+                        if(sl.getClothe().getTypeClothe().getName().equals(c.getTypeClothe().getName())){
+                            calculateDiscountSale(sl, c, campaignResponses);
+                        }
+                    }
+                    if(c.getTypeClothe() == null && c.getTypeGender() == null && c.getTypeStage() != null) {
+                        if (sl.getClothe().getTypeStage().getName().equals(c.getTypeStage().getName())) {
+                            calculateDiscountSale(sl, c, campaignResponses);
+                        }
                     }
                 }
             }
         }
 
         double totalValue = saleLists.stream().mapToDouble(SaleList::getValue).sum();
-        double payPointsValue = 0.0;
-        int points = 0;
+        int valuePoints = 0;
+        int usedPoints = 0;
         newSale.setValue(BigInteger.valueOf((long) totalValue));
 
-        int newPoints = newSale.getValue().divide(BigInteger.valueOf(AMOUNT_PER_POINT)).intValue() * POINTS_PER_1000;
-        user.setPoints(user.getPoints() + newPoints);
-
         if (payPoints) {
-            payPointsValue = user.getPoints() * (double) AMOUNT_PER_POINT / POINTS_PER_1000;
 
-            if (payPointsValue > totalValue) {
-                payPointsValue = payPointsValue - totalValue;
+            valuePoints = (int) ((totalValue/AMOUNT_PER_POINT) * POINTS_PER_1000);
+
+            if (user.getPoints() > valuePoints) {
+                user.setPoints(user.getPoints() - valuePoints);
+                usedPoints = valuePoints;
                 totalValue = 0.0;
             } else {
-                totalValue = totalValue - payPointsValue;
-            }
 
-            points = (int) ((payPointsValue / AMOUNT_PER_POINT) * POINTS_PER_1000);
-            user.setPoints(user.getPoints() - points);
+                valuePoints = valuePoints - user.getPoints();
+                usedPoints = user.getPoints();
+                user.setPoints(0);
+                totalValue = totalValue - (double) (valuePoints * AMOUNT_PER_POINT) / POINTS_PER_1000;;
+            }
+        }
+        else {
+            int newPoints = (int) ((totalValue/AMOUNT_PER_POINT) * POINTS_PER_1000);
+            user.setPoints(user.getPoints() + newPoints);
         }
 
         newSale.setValue(BigInteger.valueOf((long) totalValue));
+        newSale.setPay_points(usedPoints);
 
         SaleDataRequest sdr = SaleDataRequest.builder()
                 .sale(newSale)
@@ -340,45 +386,20 @@ public class WardRobeService implements IWardRobeService {
     @Override
     public List<InventoryResponse> findInventoriesByWardRopeUuid(UUID wardRopeUuid) throws DataServiceException {
         List<Inventory> inventories = wardRopeDataService.findInventoriesByWardRopeUuid(wardRopeUuid);
-
-        List<TypeGender> typeGenders = clotheService.findAllTypeGender();
-        List<TypeStage> typeStages = clotheService.findAllTypeStage();
         List<InventoryResponse> inventoryResponses = new ArrayList<>();
 
-        List<String> typeGenderNames = new ArrayList<>();
 
-        typeGenders.forEach(tg -> typeGenderNames.add(tg.getName()));
-
-        for(Inventory i : inventories){
-            InventoryResponse inventoryResponse = new InventoryResponse();
-            List<TypeStageResponse> typeStageResponses = new ArrayList<>();
-            for (String typeGenderName : typeGenderNames){
-                for(TypeStage typeStage : typeStages){
-                    TypeStageResponse typeStageResponse;
-                    if(i.getClothe().getTypeStage().getName().equals(typeStage.getName()) && i.getClothe().getTypeGender().getName().equals(typeGenderName)){
-                        typeStageResponse = TypeStageResponse.builder()
-                                .typeGenderName(typeGenderName)
-                                .name(typeStage.getName())
-                                .stock(i.getStock())
-                                .build();
-                    }
-                    else{
-                        typeStageResponse = TypeStageResponse.builder()
-                                .name(typeStage.getName())
-                                .typeGenderName(typeGenderName)
-                                .stock(0)
-                                .build();
-                    }
-                    typeStageResponses.add(typeStageResponse);
-                }
-            }
-            inventoryResponse.setTypeStageResponses(typeStageResponses);
-            inventoryResponse.setClotheName(i.getClothe().getTypeClothe().getName());
-            inventoryResponse.setTotalStock(inventoryResponse.getTypeStageResponses().stream().map(TypeStageResponse::getStock).mapToInt(Integer::intValue).sum());
-            inventoryResponse.setTypeGenderList(typeGenderNames);
-            inventoryResponses.add(inventoryResponse);
+        for (Inventory i : inventories){
+            inventoryResponses.add(
+              InventoryResponse.builder()
+                      .uuid(i.getUuid())
+                      .stock(i.getStock())
+                      .clothName(i.getClothe().getTypeClothe().getName())
+                      .clothGender(i.getClothe().getTypeGender().getName())
+                      .clothStage(i.getClothe().getTypeStage().getName())
+                      .build()
+            );
         }
-
         return inventoryResponses;
     }
 
@@ -387,7 +408,7 @@ public class WardRobeService implements IWardRobeService {
         Inventory inventory = wardRopeDataService.findInventoryByClotheUuidAndWardRopeUuid(clotheUuid, wardRopeUuid);
 
         return InventoryResponse.builder()
-                .clotheName(inventory.getClothe().getTypeClothe().getName())
+                .clothName(inventory.getClothe().getTypeClothe().getName())
                 .build();
     }
 
@@ -484,6 +505,7 @@ public class WardRobeService implements IWardRobeService {
                     .uuid(s.getUuid())
                     .date(s.getSale_date())
                     .quantity(quantity)
+                    .payPoints(String.valueOf(s.getPay_points()))
                     .price(s.getValue().toString())
                     .build();
 
