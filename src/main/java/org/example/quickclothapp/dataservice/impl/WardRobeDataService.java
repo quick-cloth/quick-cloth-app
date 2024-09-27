@@ -181,6 +181,27 @@ public class WardRobeDataService implements IWardRopeDataService {
     }
 
     @Override
+    public Order confirmOrder(OrderDataRequest or) throws DataServiceException {
+        try{
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+
+            HttpEntity<OrderDataRequest> request = new HttpEntity<>(or, headers);
+
+            ResponseEntity<Order> responseEntity = restTemplate.exchange(
+                    apiServerUrl + "ward_rope/order/confirm?orderUuid=" + or.getOrder().getUuid(),
+                    HttpMethod.POST,
+                    request,
+                    Order.class);
+
+            return responseEntity.getBody();
+        }
+        catch (HttpClientErrorException e){
+            throw new DataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
+        }
+    }
+
+    @Override
     public List<OrderState> findAllOrderStates() throws DataServiceException {
         try {
             UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(apiServerUrl + "ward_rope/order_state/get_all");

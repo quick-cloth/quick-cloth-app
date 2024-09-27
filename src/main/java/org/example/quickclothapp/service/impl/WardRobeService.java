@@ -18,9 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class WardRobeService implements IWardRobeService {
@@ -36,6 +34,8 @@ public class WardRobeService implements IWardRobeService {
     private static final int MINIMUM_POINTS = 80;
     @Value("${api-server-order-state-received}")
     private String orderStateReceived;
+    @Value("${api-server-order-state-delivered}")
+    private String orderStateDelivered;
 
     public WardRobeService(IWardRopeDataService wardRopeDataService, ILocationDataService locationDataService, IClotheBankService clotheBankService, IUserDataService userDataService, IClotheService clotheService, IEmailService emailService) {
         this.wardRopeDataService = wardRopeDataService;
@@ -522,6 +522,7 @@ public class WardRobeService implements IWardRobeService {
                 .uuid(saleLists.get(0).getSale().getUuid())
                 .price(saleLists.get(0).getSale().getValue().toString())
                 .date(saleLists.get(0).getSale().getSale_date())
+                .payPoints(String.valueOf(saleLists.get(0).getSale().getPay_points()))
                 .saleList(saleListWardRobeResponses)
                 .build();
 
@@ -537,6 +538,66 @@ public class WardRobeService implements IWardRobeService {
         }
 
         return saleWardRobeResponse;
+    }
+
+    @Override
+    public MessageResponse confirmOrder(OrderRequest orderRequest, UUID orderUuid) throws DataServiceException {
+        Order order = clotheBankService.findOrderByUuid(orderUuid);
+
+        OrderState orderState = wardRopeDataService.findOrderStateByName(orderStateDelivered);
+
+        Map<UUID, Integer> mapClothesRequest = new HashMap<>();
+
+        List<OrderList> orderList = clotheBankService.findOrderListByOrder(order.getUuid());
+
+        for (ClotheRequest cr : orderRequest.getClothes()) {
+            mapClothesRequest.put(cr.getClotheUuid(), cr.getQuantity());
+        }
+
+        for(OrderList orl : orderList){
+            int quantity = mapClothesRequest.get(orl.getClothe().getUuid());
+            orl.setDelivery_value(quantity);
+        }
+
+        order.setOrderState(orderState);
+        order.setDelivery_date(LocalDate.now());
+
+        OrderDataRequest or = OrderDataRequest.builder()
+                .order(order)
+                .orderList(orderList)
+                .build();
+
+        wardRopeDataService.confirmOrder(or);
+
+        return new MessageResponse("Order confirmation successfully with state : " + orderStateDelivered, null, order.getUuid());
+    }
+
+    @Override
+    public OrderResponseWardRobe findOrderByUuid(UUID orderUuid) throws DataServiceException {
+        Order order = clotheBankService.findOrderByUuid(orderUuid);
+        List<OrderList> orderLists = clotheBankService.findOrderListByOrder(order.getUuid());
+
+        List<OrderListResponse> orderListResponses = new ArrayList<>();
+
+        for (OrderList ol : orderLists){
+            OrderListResponse olr = OrderListResponse.builder()
+                    .clotheName(ol.getClothe().getTypeClothe().getName())
+                    .genderName(ol.getClothe().getTypeGender().getName())
+                    .stageName(ol.getClothe().getTypeStage().getName())
+                    .orderValue(ol.getValue_order())
+                    .deliveryValue(ol.getDelivery_value())
+                    .build();
+            orderListResponses.add(olr);
+        }
+
+        return OrderResponseWardRobe.builder()
+                .uuid(order.getUuid())
+                .orderValue(orderListResponses.stream().mapToInt(OrderListResponse::getOrderValue).sum())
+                .deliveryValue(orderListResponses.stream().mapToInt(OrderListResponse::getDeliveryValue).sum())
+                .orderDate(order.getOrder_date())
+                .orderState(order.getOrderState().getName())
+                .orderList(orderListResponses)
+                .build();
     }
 
 }

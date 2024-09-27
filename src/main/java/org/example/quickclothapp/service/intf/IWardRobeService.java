@@ -26,4 +26,6 @@ public interface IWardRobeService {
     List<OrderState> getAllOrderStates() throws DataServiceException;
     List<SaleWardRobeResponse> findSalesByWardRopeUuid(UUID wardRopeUuid) throws DataServiceException;
     SaleWardRobeResponse findSaleByUuid(UUID uuid) throws DataServiceException;
+    MessageResponse confirmOrder(OrderRequest orderRequest, UUID orderUuid) throws DataServiceException;
+    OrderResponseWardRobe findOrderByUuid(UUID orderUuid) throws DataServiceException;
 }

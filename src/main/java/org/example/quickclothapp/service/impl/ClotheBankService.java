@@ -258,4 +258,14 @@ public class ClotheBankService implements IClotheBankService {
 
         return new MessageResponse("Order response successfully with state : " + orderStateOnWay, null, order.getUuid());
     }
+
+    @Override
+    public Order findOrderByUuid(UUID orderUuid) throws DataServiceException {
+        return clotheBankDataService.findOrderByUuid(orderUuid);
+    }
+
+    @Override
+    public List<OrderList> findOrderListByOrder(UUID uuid) throws DataServiceException {
+        return clotheBankDataService.findOrderListByOrder(uuid);
+    }
 }

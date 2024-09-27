@@ -2,9 +2,7 @@ package org.example.quickclothapp.service.intf;
 
 import org.example.quickclothapp.exception.ClotheBankServiceException;
 import org.example.quickclothapp.exception.DataServiceException;
-import org.example.quickclothapp.model.Campaign;
-import org.example.quickclothapp.model.ClotheBank;
-import org.example.quickclothapp.model.TypeCampaign;
+import org.example.quickclothapp.model.*;
 import org.example.quickclothapp.payload.request.CampaignRequest;
 import org.example.quickclothapp.payload.request.ClotheBankRequest;
 import org.example.quickclothapp.payload.request.DonationRequest;
@@ -29,4 +27,6 @@ public interface IClotheBankService {
     List<DonationResponse> findDonationByClotheBankUuid(UUID clotheBankUuid) throws DataServiceException;
     List<OrderResponse> findOrdersByClotheBankUuid(UUID clotheBankUuid, UUID orderStateUuid, UUID wardRobeUuid) throws DataServiceException;
     MessageResponse responseOrder(OrderRequest orderRequest, UUID orderUuid) throws DataServiceException;
+    Order findOrderByUuid(UUID orderUuid) throws DataServiceException;
+    List<OrderList> findOrderListByOrder(UUID uuid) throws DataServiceException;
 }

@@ -149,6 +149,31 @@ public class WardRobeController {
         }
     }
 
+    @Operation(summary = "#TODO: 27 de septiembre -> Confirmar una orden")
+    @ApiResponse(responseCode = "200", description = "El valor uuid retorna el uuid de la orden confirmada", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = MessageResponse.class))})
+    @ApiResponse(responseCode = "400", description = "El valor mensaje retorna el mensaje de error", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = MessageResponse.class))})
+    @PostMapping("/order/confirm")
+    public ResponseEntity<?> confirmOrder(@RequestBody OrderRequest orderRequest, @RequestParam UUID orderUuid) {
+        try {
+            return ResponseEntity.ok(wardRopeService.confirmOrder(orderRequest, orderUuid));
+        } catch (DataServiceException e) {
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage(), null, null));
+        }
+    }
+
+    @Operation(summary = "#TODO: 27 de septiembre -> Obtener una orden para un ropero")
+    @ApiResponse(responseCode = "200", description = "Entidad de la orden", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = OrderResponseWardRobe.class))})
+    @ApiResponse(responseCode = "400", description = "El valor mensaje retorna el mensaje de error", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = MessageResponse.class))})
+    @GetMapping("/order/get")
+    public ResponseEntity<?> getOrder(@RequestParam UUID orderUuid) {
+        try {
+            return ResponseEntity.ok(wardRopeService.findOrderByUuid(orderUuid));
+        } catch (DataServiceException e) {
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage(), null, null));
+        }
+    }
+
+
     @Operation(summary = "#TODO: 22 de septiembre -> Obtener tipos de estado de orden")
     @ApiResponse(responseCode = "200", description = "La lista de tipos de estado de orden", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = OrderState.class))})
     @ApiResponse(responseCode = "400", description = "El valor mensaje retorna el mensaje de error", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = MessageResponse.class))})
