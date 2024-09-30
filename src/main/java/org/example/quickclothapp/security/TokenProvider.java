@@ -1,6 +1,8 @@
 package org.example.quickclothapp.security;
 
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.io.Decoders;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -10,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
+import java.security.Key;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
@@ -63,8 +66,13 @@ public class TokenProvider implements Serializable {
                 .claim(AUTHORITIES_KEY, authorities)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + TOKEN_VALIDITY * 1000))
-                .signWith(SignatureAlgorithm.HS256, SIGNING_KEY)
+                .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
+    }
+
+    private Key getSignInKey() {
+        byte[] keyBytes = Decoders.BASE64.decode(SIGNING_KEY);
+        return Keys.hmacShaKeyFor(keyBytes);
     }
 
     public Boolean validateToken(String token, UserDetails userDetails) {
