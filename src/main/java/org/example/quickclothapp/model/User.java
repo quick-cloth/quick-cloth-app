@@ -23,4 +23,5 @@ public class User {
     private LocalDate creation_date;
     private Role role;
     private TypeDocument type_document;
+    private String password;
 }

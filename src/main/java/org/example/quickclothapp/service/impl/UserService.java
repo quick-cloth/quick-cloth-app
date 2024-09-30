@@ -12,22 +12,29 @@ import org.example.quickclothapp.payload.request.WardrobeEmployeeRequest;
 import org.example.quickclothapp.payload.response.MessageResponse;
 import org.example.quickclothapp.payload.response.UserResponse;
 import org.example.quickclothapp.service.intf.IFoundationService;
+import org.example.quickclothapp.service.intf.IUserNameService;
 import org.example.quickclothapp.service.intf.IUserService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
 import java.time.LocalDate;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
-public class UserService implements IUserService {
+public class UserService implements IUserService, UserDetailsService {
 
     private final IUserDataService userDataService;
     private final IFoundationService foundationService;
     private final IClotheBankDataService clotheBankService;
     private final IWardRopeDataService wardRopeService;
+    private final BCryptPasswordEncoder bcryptEncoder;
+    private final IUserNameService userNameService;
 
     @Value("${api-server-rol-client}")
     private String clientRol;
@@ -44,11 +51,13 @@ public class UserService implements IUserService {
     @Value("${api-server-rol-wardRope-employee}")
     private String wardRopeEmployeeRol;
 
-    public UserService(IUserDataService userDataService, IFoundationService foundationService, IClotheBankDataService clotheBankService, IWardRopeDataService wardRopeService) {
+    public UserService(IUserDataService userDataService, IFoundationService foundationService, IClotheBankDataService clotheBankService, IWardRopeDataService wardRopeService, BCryptPasswordEncoder bcryptEncoder, IUserNameService userNameService) {
         this.userDataService = userDataService;
         this.foundationService = foundationService;
         this.clotheBankService = clotheBankService;
         this.wardRopeService = wardRopeService;
+        this.bcryptEncoder = bcryptEncoder;
+        this.userNameService = userNameService;
     }
 
     @Override
@@ -79,12 +88,13 @@ public class UserService implements IUserService {
                 .uuid(UUID.randomUUID())
                 .name(user.getName())
                 .last_name(user.getLastName())
-                .user_name(user.getUserName())
+                .user_name(generateUserName(user.getName(), user.getLastName()))
                 .email(user.getEmail())
                 .phone(user.getPhone())
                 .points(0)
                 .creation_date(LocalDate.now())
                 .document(new BigInteger(user.getDocumentNumber()))
+                .password(bcryptEncoder.encode("12345"))
                 .type_document(typeDocument)
                 .role(role)
                 .build();
@@ -104,12 +114,13 @@ public class UserService implements IUserService {
                 .uuid(UUID.randomUUID())
                 .name(user.getName())
                 .last_name(user.getLastName())
-                .user_name(user.getUserName())
+                .user_name(generateUserName(user.getName(), user.getLastName()))
                 .email(user.getEmail())
                 .phone(user.getPhone())
                 .points(0)
                 .creation_date(LocalDate.now())
                 .document(new BigInteger(user.getDocumentNumber()))
+                .password(bcryptEncoder.encode("12345"))
                 .type_document(typeDocument)
                 .role(role)
                 .build();
@@ -130,12 +141,13 @@ public class UserService implements IUserService {
                 .uuid(UUID.randomUUID())
                 .name(user.getName())
                 .last_name(user.getLastName())
-                .user_name(user.getUserName())
+                .user_name(generateUserName(user.getName(), user.getLastName()))
                 .email(user.getEmail())
                 .phone(user.getPhone())
                 .points(0)
                 .creation_date(LocalDate.now())
                 .document(new BigInteger(user.getDocumentNumber()))
+                .password(bcryptEncoder.encode("12345"))
                 .type_document(typeDocument)
                 .role(role)
                 .build();
@@ -162,13 +174,14 @@ public class UserService implements IUserService {
                 .uuid(UUID.randomUUID())
                 .name(user.getName())
                 .last_name(user.getLastName())
-                .user_name(user.getUserName())
+                .user_name(generateUserName(user.getName(), user.getLastName()))
                 .email(user.getEmail())
                 .phone(user.getPhone())
                 .points(0)
                 .creation_date(LocalDate.now())
                 .document(new BigInteger(user.getDocumentNumber()))
                 .type_document(typeDocument)
+                .password(bcryptEncoder.encode("12345"))
                 .role(role)
                 .build();
 
@@ -194,13 +207,14 @@ public class UserService implements IUserService {
                 .uuid(UUID.randomUUID())
                 .name(user.getName())
                 .last_name(user.getLastName())
-                .user_name(user.getUserName())
+                .user_name(generateUserName(user.getName(), user.getLastName()))
                 .email(user.getEmail())
                 .phone(user.getPhone())
                 .points(0)
                 .creation_date(LocalDate.now())
                 .document(new BigInteger(user.getDocumentNumber()))
                 .type_document(typeDocument)
+                .password(bcryptEncoder.encode("12345"))
                 .role(role)
                 .build();
 
@@ -256,10 +270,6 @@ public class UserService implements IUserService {
             throw new DataServiceException("User document already exists", 400);
         }
 
-        if (userDataService.findUserByUserName(userRequest.getUserName()) != null){
-            throw new DataServiceException("User name already exists", 400);
-        }
-
         if (userDataService.findUserByEmail(userRequest.getEmail()) != null){
             throw new DataServiceException("User email already exists", 400);
         }
@@ -267,5 +277,50 @@ public class UserService implements IUserService {
         if (userDataService.findUserByPhoneNumber(String.valueOf(userRequest.getPhone())) != null){
             throw new DataServiceException("User phone already exists", 400);
         }
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        try {
+            User user = userDataService.findUserByUserName(username);
+            if (user == null) {
+                throw new UsernameNotFoundException("User not found");
+            }
+
+            org.springframework.security.core.userdetails.User userDetails = new org.springframework.security.core.userdetails.User(user.getUser_name(), user.getPassword(), getAuthority(user.getRole()));
+            return userDetails;
+        } catch (DataServiceException e) {
+            throw new UsernameNotFoundException("User not found");
+        }
+    }
+
+    private Set<SimpleGrantedAuthority> getAuthority(Role roleUser){
+        Set<SimpleGrantedAuthority> authorities = new HashSet<>();
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + roleUser.getName()));
+        return authorities;
+    }
+
+    private String randomUserNameSelector(String name, String lastName) {
+        Random random = new Random();
+        int randomInt = random.nextInt(3);
+        return switch (randomInt) {
+            case 0 -> userNameService.firstLetterNameAndLastName(name, lastName);
+            case 1 -> userNameService.firstLetterLastNameAndName(name, lastName);
+            case 2 -> userNameService.nameAndLastName(name, lastName);
+            default -> "";
+        };
+    }
+
+    public boolean validateUserNames(String username) throws DataServiceException {
+        User user = userDataService.findUserByUserName(username);
+        return user == null;
+    }
+
+    private String generateUserName(String name, String lastName) throws DataServiceException {
+        String username = randomUserNameSelector(name, lastName);
+        while (!validateUserNames(username)) {
+            username = randomUserNameSelector(name, lastName);
+        }
+        return username;
     }
 }

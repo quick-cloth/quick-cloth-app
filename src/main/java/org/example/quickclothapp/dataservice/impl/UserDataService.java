@@ -126,7 +126,7 @@ public class UserDataService implements IUserDataService {
             HttpEntity<User> request = new HttpEntity<>(newUser, headers);
 
             ResponseEntity<User> responseEntity = restTemplate.exchange(
-                    apiServerUrl + "user/save/client",
+                    apiServerUrl + "user/save",
                     HttpMethod.POST,
                     request,
                     User.class);

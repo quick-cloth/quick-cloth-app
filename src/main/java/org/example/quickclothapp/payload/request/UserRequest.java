@@ -13,7 +13,6 @@ import java.util.UUID;
 public class UserRequest {
     private String name;
     private String lastName;
-    private String userName;
     private String email;
     private BigInteger phone;
     private String documentNumber;
