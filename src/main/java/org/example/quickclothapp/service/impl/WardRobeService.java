@@ -607,27 +607,14 @@ public class WardRobeService implements IWardRobeService {
 
         for(Order o : orders){
             List<OrderList> orderList = clotheBankService.findOrderListByOrder(o.getUuid());
-            List<OrderListResponse> orderListResponses = new ArrayList<>();
-
-            for (OrderList ol : orderList){
-                OrderListResponse olr = OrderListResponse.builder()
-                        .clotheName(ol.getClothe().getTypeClothe().getName())
-                        .genderName(ol.getClothe().getTypeGender().getName())
-                        .stageName(ol.getClothe().getTypeStage().getName())
-                        .orderValue(ol.getValue_order())
-                        .deliveryValue(ol.getDelivery_value())
-                        .build();
-                orderListResponses.add(olr);
-            }
 
             orderResponseWardRobes.add(
                     OrderResponseWardRobe.builder()
                             .uuid(o.getUuid())
-                            .orderValue(orderListResponses.stream().mapToInt(OrderListResponse::getOrderValue).sum())
-                            .deliveryValue(orderListResponses.stream().mapToInt(OrderListResponse::getDeliveryValue).sum())
+                            .orderValue(orderList.stream().mapToInt(OrderList::getValue_order).sum())
+                            .deliveryValue(orderList.stream().mapToInt(OrderList::getDelivery_value).sum())
                             .orderDate(o.getOrder_date())
                             .orderState(o.getOrderState().getName())
-                            .orderList(orderListResponses)
                             .build()
             );
         }

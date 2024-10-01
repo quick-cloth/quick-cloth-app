@@ -173,7 +173,7 @@ public class WardRobeController {
         }
     }
 
-    @Operation(summary = "#TODO: 01 de octubre -> Obtener todas las ordenes para un ropero")
+    @Operation(summary = "#TODO: 01 de octubre -> Obtener todas las ordenes para un ropero, (orderList es nulo)")
     @ApiResponse(responseCode = "200", description = "La lista de ordenes", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = OrderResponseWardRobe.class))})
     @ApiResponse(responseCode = "400", description = "El valor mensaje retorna el mensaje de error", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = MessageResponse.class))})
     @GetMapping("/order/get_all")
