@@ -157,35 +157,37 @@ public class ClotheBankService implements IClotheBankService {
             user = userService.findUserByUuid(donationRequest.getUserUuid());
         }
 
-        Clothe clothe = null;
+        for(ClotheDonationRequest cd : donationRequest.getClothesDonation()){
+            Clothe clothe = null;
 
-        clothe = clotheService.findClotheByAllTypes(
-                donationRequest.getTypeClotheUuid(),
-                donationRequest.getTypeGenderUuid(),
-                donationRequest.getTypeStageUuid()
-        );
-
-
-        if (clothe == null){
-            clothe = clotheService.saveClothe(
-                    donationRequest.getTypeClotheUuid(),
-                    donationRequest.getTypeGenderUuid(),
-                    donationRequest.getTypeStageUuid()
+            clothe = clotheService.findClotheByAllTypes(
+                    cd.getTypeClotheUuid(),
+                    cd.getTypeGenderUuid(),
+                    cd.getTypeStageUuid()
             );
+
+
+            if (clothe == null){
+                clothe = clotheService.saveClothe(
+                        cd.getTypeClotheUuid(),
+                        cd.getTypeGenderUuid(),
+                        cd.getTypeStageUuid()
+                );
+            }
+
+            Donation donation = Donation.builder()
+                    .uuid(UUID.randomUUID())
+                    .clothe_bank(clotheBank)
+                    .clothe(clothe)
+                    .user(user)
+                    .creation_date(LocalDate.now())
+                    .quantity(cd.getQuantity())
+                    .build();
+
+            clotheBankDataService.saveDonation(donation);
         }
 
-        Donation donation = Donation.builder()
-                .uuid(UUID.randomUUID())
-                .clothe_bank(clotheBank)
-                .clothe(clothe)
-                .user(user)
-                .creation_date(LocalDate.now())
-                .quantity(donationRequest.getQuantity())
-                .build();
-
-        clotheBankDataService.saveDonation(donation);
-
-        return new MessageResponse("Donation saved successfully", null, donation.getUuid());
+        return new MessageResponse("Donations saved successfully", null, null);
     }
 
     @Override

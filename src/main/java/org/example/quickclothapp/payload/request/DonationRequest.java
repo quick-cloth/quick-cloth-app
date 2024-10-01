@@ -2,6 +2,7 @@ package org.example.quickclothapp.payload.request;
 
 import lombok.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -10,10 +11,7 @@ import java.util.UUID;
 @Setter
 @Builder
 public class DonationRequest {
-    private UUID clotheBankUuid;
-    private UUID typeClotheUuid;
-    private UUID typeGenderUuid;
-    private UUID typeStageUuid;
     private UUID userUuid;
-    private Integer quantity;
+    private UUID clotheBankUuid;
+    private List<ClotheDonationRequest> clothesDonation;
 }
