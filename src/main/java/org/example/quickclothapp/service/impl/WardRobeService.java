@@ -600,4 +600,39 @@ public class WardRobeService implements IWardRobeService {
                 .build();
     }
 
+    @Override
+    public List<OrderResponseWardRobe> findOrdersByWardRopeUuid(UUID wardRobeUuid) throws DataServiceException {
+        List<Order> orders = wardRopeDataService.findOrdersByWardRobeUuid(wardRobeUuid);
+        List<OrderResponseWardRobe> orderResponseWardRobes = new ArrayList<>();
+
+        for(Order o : orders){
+            List<OrderList> orderList = clotheBankService.findOrderListByOrder(o.getUuid());
+            List<OrderListResponse> orderListResponses = new ArrayList<>();
+
+            for (OrderList ol : orderList){
+                OrderListResponse olr = OrderListResponse.builder()
+                        .clotheName(ol.getClothe().getTypeClothe().getName())
+                        .genderName(ol.getClothe().getTypeGender().getName())
+                        .stageName(ol.getClothe().getTypeStage().getName())
+                        .orderValue(ol.getValue_order())
+                        .deliveryValue(ol.getDelivery_value())
+                        .build();
+                orderListResponses.add(olr);
+            }
+
+            orderResponseWardRobes.add(
+                    OrderResponseWardRobe.builder()
+                            .uuid(o.getUuid())
+                            .orderValue(orderListResponses.stream().mapToInt(OrderListResponse::getOrderValue).sum())
+                            .deliveryValue(orderListResponses.stream().mapToInt(OrderListResponse::getDeliveryValue).sum())
+                            .orderDate(o.getOrder_date())
+                            .orderState(o.getOrderState().getName())
+                            .orderList(orderListResponses)
+                            .build()
+            );
+        }
+
+        return orderResponseWardRobes;
+    }
+
 }

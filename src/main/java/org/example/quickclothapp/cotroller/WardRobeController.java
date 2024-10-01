@@ -173,6 +173,17 @@ public class WardRobeController {
         }
     }
 
+    @Operation(summary = "#TODO: 01 de octubre -> Obtener todas las ordenes para un ropero")
+    @ApiResponse(responseCode = "200", description = "La lista de ordenes", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = OrderResponseWardRobe.class))})
+    @ApiResponse(responseCode = "400", description = "El valor mensaje retorna el mensaje de error", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = MessageResponse.class))})
+    @GetMapping("/order/get_all")
+    public ResponseEntity <?> getAllOrdersByWardRobe(@RequestParam UUID wardRobeUuid) {
+        try {
+            return ResponseEntity.ok(wardRopeService.findOrdersByWardRopeUuid(wardRobeUuid));
+        } catch (DataServiceException e) {
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage(), null, null));
+        }
+    }
 
     @Operation(summary = "#TODO: 22 de septiembre -> Obtener tipos de estado de orden")
     @ApiResponse(responseCode = "200", description = "La lista de tipos de estado de orden", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = OrderState.class))})

@@ -236,4 +236,23 @@ public class WardRobeDataService implements IWardRopeDataService {
             throw new DataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
         }
     }
+
+    @Override
+    public List<Order> findOrdersByWardRobeUuid(UUID wardRobeUuid) throws DataServiceException {
+        try{
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(apiServerUrl + "ward_rope/order/get_all")
+                    .queryParam("wardRobeUuid", wardRobeUuid);
+
+            ResponseEntity<Order[]> responseEntity = restTemplate.exchange(
+                    builder.toUriString(),
+                    HttpMethod.GET,
+                    null,
+                    Order[].class);
+
+            return List.of(responseEntity.getBody());
+        }
+        catch (HttpClientErrorException e){
+            throw new DataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
+        }
+    }
 }
