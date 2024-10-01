@@ -69,6 +69,10 @@ public class UserService implements IUserService, UserDetailsService {
     public UserResponse findUserByDocumentNumber(String documentNumber) throws DataServiceException {
         User user = userDataService.findUserByDocumentNumber(documentNumber);
 
+        if(user == null){
+            throw new DataServiceException("User not found", 404);
+        }
+
         return UserResponse.builder()
                 .uuid(user.getUuid())
                 .name(user.getName())

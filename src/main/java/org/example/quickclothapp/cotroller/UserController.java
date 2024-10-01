@@ -93,7 +93,10 @@ public class UserController {
         try {
             return ResponseEntity.ok(userService.findUserByDocumentNumber(identification));
         } catch (DataServiceException e) {
-            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage(), null, null));
+            if (e.getStatusCode() == 404) {
+                return ResponseEntity.notFound().build();
+            }
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage(), e.getStatusCode(), null));
         }
     }
 
