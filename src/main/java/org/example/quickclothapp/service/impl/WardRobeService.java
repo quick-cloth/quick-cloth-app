@@ -622,4 +622,21 @@ public class WardRobeService implements IWardRobeService {
         return orderResponseWardRobes;
     }
 
+    @Override
+    public Clothe findInventoryByClotheUuid(UUID typeClotheUuid, UUID typeGenderUuid, UUID typeStageUuid, UUID wardRopeUuid) throws DataServiceException {
+        Clothe clothe = clotheService.findClotheByAllTypes(typeClotheUuid, typeGenderUuid, typeStageUuid);
+
+        if(clothe == null){
+            clothe = clotheService.saveClothe(typeClotheUuid, typeGenderUuid, typeStageUuid);
+        }
+
+        Inventory i = wardRopeDataService.findInventoryByClotheUuidAndWardRopeUuid(clothe.getUuid(), wardRopeUuid);
+
+        if (i == null){
+            throw new DataServiceException("Inventory not found", 404);
+        }
+
+        return i.getClothe();
+    }
+
 }

@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.example.quickclothapp.exception.DataServiceException;
 import org.example.quickclothapp.exception.WardRopeServiceExpetion;
+import org.example.quickclothapp.model.Clothe;
 import org.example.quickclothapp.model.OrderState;
 import org.example.quickclothapp.payload.request.OrderRequest;
 import org.example.quickclothapp.payload.request.SaleRequest;
@@ -82,6 +83,21 @@ public class WardRobeController {
         try {
             return ResponseEntity.ok(wardRopeService.findInventoriesByWardRopeUuid(wardRopeUuid));
         } catch (DataServiceException e) {
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage(), null, null));
+        }
+    }
+
+    @Operation(summary = "#TODO 01 octubre -> Obtiene una prenda del inventario de un ropero dado los 3 tipos de prenda (consultar al tratar de añadirla en una venta)")
+    @ApiResponse(responseCode = "200", description = "La entidad de la prenda", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Clothe.class))})
+    @ApiResponse(responseCode = "400", description = "El valor mensaje retorna el mensaje de error", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = MessageResponse.class))})
+    @GetMapping("/inventory/get/clothe")
+    public ResponseEntity<?> getInventoryByClotheAndWardRobe(@RequestParam UUID typeClotheUuid, UUID typeGenderUuid, UUID typeStageUuid, UUID wardRopeUuid) {
+        try {
+            return ResponseEntity.ok(wardRopeService.findInventoryByClotheUuid(typeClotheUuid, typeGenderUuid, typeStageUuid, wardRopeUuid));
+        } catch (DataServiceException e) {
+            if (e.getStatusCode() == 404) {
+                return ResponseEntity.notFound().build();
+            }
             return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage(), null, null));
         }
     }

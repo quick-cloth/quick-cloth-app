@@ -2,6 +2,7 @@ package org.example.quickclothapp.service.intf;
 
 import org.example.quickclothapp.exception.DataServiceException;
 import org.example.quickclothapp.exception.WardRopeServiceExpetion;
+import org.example.quickclothapp.model.Clothe;
 import org.example.quickclothapp.model.OrderState;
 import org.example.quickclothapp.model.Wardrobe;
 import org.example.quickclothapp.payload.request.OrderRequest;
@@ -29,4 +30,5 @@ public interface IWardRobeService {
     MessageResponse confirmOrder(OrderRequest orderRequest, UUID orderUuid) throws DataServiceException;
     OrderResponseWardRobe findOrderByUuid(UUID orderUuid) throws DataServiceException;
     List<OrderResponseWardRobe> findOrdersByWardRopeUuid(UUID wardRobeUuid) throws DataServiceException;
+    Clothe findInventoryByClotheUuid(UUID typeClotheUuid, UUID typeGenderUuid, UUID typeStageUuid, UUID wardRopeUuid) throws DataServiceException;
 }
