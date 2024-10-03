@@ -255,4 +255,23 @@ public class WardRobeDataService implements IWardRopeDataService {
             throw new DataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
         }
     }
+
+    @Override
+    public void saveSendEmail(SendEmail sendEmail) throws DataServiceException {
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+
+            HttpEntity<SendEmail> request = new HttpEntity<>(sendEmail, headers);
+
+            ResponseEntity<SendEmail> responseEntity = restTemplate.exchange(
+                    apiServerUrl + "ward_rope/send_email/save",
+                    HttpMethod.POST,
+                    request,
+                    SendEmail.class);
+        }catch (HttpClientErrorException e) {
+            throw new DataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
+        }
+    }
+
 }

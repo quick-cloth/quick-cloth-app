@@ -305,12 +305,20 @@ public class WardRobeService implements IWardRobeService {
     }
 
     @Async
-    public void sendEmailNewSale(Sale sale, List<SaleList> saleLists, List<CampaignResponse> campaignResponses){
+    public void sendEmailNewSale(Sale sale, List<SaleList> saleLists, List<CampaignResponse> campaignResponses) throws DataServiceException {
         EmailRequest emailRequest = EmailRequest.builder()
                 .to(sale.getUser().getEmail())
                 .subject("Venta realizada")
                 .build();
         emailService.sendEmailNewSale(sale, saleLists, emailRequest, campaignResponses);
+
+        SendEmail sendEmail = SendEmail.builder()
+                .uuid(UUID.randomUUID())
+                .email(emailRequest.getTo())
+                .send_date(LocalDate.now())
+                .build();
+
+        wardRopeDataService.saveSendEmail(sendEmail);
     }
 
     private void calculateDiscountSale(SaleList slr, Campaign c, List<CampaignResponse> campaignResponses) {
