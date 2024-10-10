@@ -1,20 +1,20 @@
 package org.example.quickclothapp.service.impl;
 
+import jakarta.mail.MessagingException;
 import org.example.quickclothapp.dataservice.intf.IClotheBankDataService;
 import org.example.quickclothapp.dataservice.intf.IUserDataService;
 import org.example.quickclothapp.dataservice.intf.IWardRopeDataService;
 import org.example.quickclothapp.exception.DataServiceException;
 import org.example.quickclothapp.model.*;
-import org.example.quickclothapp.payload.request.BankEmployeeRequest;
-import org.example.quickclothapp.payload.request.FoundationEmployeeRequest;
-import org.example.quickclothapp.payload.request.UserRequest;
-import org.example.quickclothapp.payload.request.WardrobeEmployeeRequest;
+import org.example.quickclothapp.payload.request.*;
 import org.example.quickclothapp.payload.response.MessageResponse;
 import org.example.quickclothapp.payload.response.UserResponse;
+import org.example.quickclothapp.service.intf.IEmailService;
 import org.example.quickclothapp.service.intf.IFoundationService;
 import org.example.quickclothapp.service.intf.IUserNameService;
 import org.example.quickclothapp.service.intf.IUserService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -35,6 +35,7 @@ public class UserService implements IUserService, UserDetailsService {
     private final IWardRopeDataService wardRopeService;
     private final BCryptPasswordEncoder bcryptEncoder;
     private final IUserNameService userNameService;
+    private final IEmailService emailService;
 
     @Value("${api-server-rol-client}")
     private String clientRol;
@@ -51,13 +52,14 @@ public class UserService implements IUserService, UserDetailsService {
     @Value("${api-server-rol-wardRope-employee}")
     private String wardRopeEmployeeRol;
 
-    public UserService(IUserDataService userDataService, IFoundationService foundationService, IClotheBankDataService clotheBankService, IWardRopeDataService wardRopeService, BCryptPasswordEncoder bcryptEncoder, IUserNameService userNameService) {
+    public UserService(IUserDataService userDataService, IFoundationService foundationService, IClotheBankDataService clotheBankService, IWardRopeDataService wardRopeService, BCryptPasswordEncoder bcryptEncoder, IUserNameService userNameService, IEmailService emailService) {
         this.userDataService = userDataService;
         this.foundationService = foundationService;
         this.clotheBankService = clotheBankService;
         this.wardRopeService = wardRopeService;
         this.bcryptEncoder = bcryptEncoder;
         this.userNameService = userNameService;
+        this.emailService = emailService;
     }
 
     @Override
@@ -104,6 +106,8 @@ public class UserService implements IUserService, UserDetailsService {
                 .build();
 
         userDataService.saveUserClient(newUser);
+        sendEmailNewUser(newUser);
+
         return new MessageResponse("User created successfully", 200, newUser.getUuid());
     }
 
@@ -130,6 +134,8 @@ public class UserService implements IUserService, UserDetailsService {
                 .build();
 
         userDataService.saveUserClient(newUser);
+        sendEmailNewUser(newUser);
+
         return new MessageResponse("User created successfully", 200, newUser.getUuid());
     }
 
@@ -163,6 +169,7 @@ public class UserService implements IUserService, UserDetailsService {
                 .build();
 
         userDataService.saveUserFoundationEmployee(fer);
+        sendEmailNewUser(newUser);
 
         return new MessageResponse("User Foundation created successfully", 200, newUser.getUuid());
     }
@@ -196,6 +203,7 @@ public class UserService implements IUserService, UserDetailsService {
                 .build();
 
         userDataService.saveUserBankEmployee(ber);
+        sendEmailNewUser(newUser);
 
         return new MessageResponse("User Bank created successfully", 200, newUser.getUuid());
     }
@@ -229,8 +237,27 @@ public class UserService implements IUserService, UserDetailsService {
                 .build();
 
         userDataService.saveUserWardropeEmployee(wer);
+        sendEmailNewUser(newUser);
 
         return new MessageResponse("User Wardrope created successfully", 200, newUser.getUuid());
+    }
+
+    @Async
+    public void sendEmailNewUser(User user) throws DataServiceException {
+        EmailRequest emailRequest = EmailRequest.builder()
+                .to(user.getEmail())
+                .subject("Bienvenido!!")
+                .build();
+
+        emailService.sendEmailNewUser(user, emailRequest);
+
+        SendEmail sendEmail = SendEmail.builder()
+                .uuid(UUID.randomUUID())
+                .email(user.getEmail())
+                .send_date(LocalDate.now())
+                .build();
+
+        wardRopeService.saveSendEmail(sendEmail);
     }
 
     @Override

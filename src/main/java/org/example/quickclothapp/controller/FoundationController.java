@@ -1,4 +1,4 @@
-package org.example.quickclothapp.cotroller;
+package org.example.quickclothapp.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -7,8 +7,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.example.quickclothapp.exception.DataServiceException;
 import org.example.quickclothapp.model.TypeMeetUs;
 import org.example.quickclothapp.payload.request.FoundationRequest;
+import org.example.quickclothapp.payload.response.FoundationResponse;
 import org.example.quickclothapp.payload.response.MessageResponse;
-import org.example.quickclothapp.payload.response.UserResponse;
 import org.example.quickclothapp.service.intf.IFoundationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -43,6 +43,9 @@ public class FoundationController {
         }
     }
 
+    @Operation(summary = "#TODO: 10 de octubre  -> Obtener fundaciones por banco de ropa")
+    @ApiResponse(responseCode = "200", description = "Lista de fundaciones", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = FoundationResponse.class))})
+    @ApiResponse(responseCode = "400", description = "El valor mensaje retorna el mensaje de error", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = MessageResponse.class))})
     @GetMapping("/get_all/clothe_bank")
     public ResponseEntity<?> getAllFoundationByClotheBank(@RequestParam UUID clotheBankUuid) {
         try {
@@ -52,6 +55,9 @@ public class FoundationController {
         }
     }
 
+    @Operation(summary = "#TODO: 10 de octubre  -> Obtener una fundacion por uuid")
+    @ApiResponse(responseCode = "200", description = "Fundacion", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = FoundationResponse.class))})
+    @ApiResponse(responseCode = "400", description = "El valor mensaje retorna el mensaje de error", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = MessageResponse.class))})
     @GetMapping("/get")
     public ResponseEntity<?> getFoundation(@RequestParam UUID foundationUuid) {
         try {

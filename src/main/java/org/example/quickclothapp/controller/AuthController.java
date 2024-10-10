@@ -1,4 +1,4 @@
-package org.example.quickclothapp.cotroller;
+package org.example.quickclothapp.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;

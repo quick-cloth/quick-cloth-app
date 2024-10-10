@@ -1,4 +1,4 @@
-package org.example.quickclothapp.cotroller;
+package org.example.quickclothapp.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -9,7 +9,6 @@ import org.example.quickclothapp.model.Clothe;
 import org.example.quickclothapp.model.TypeClothe;
 import org.example.quickclothapp.model.TypeGender;
 import org.example.quickclothapp.model.TypeStage;
-import org.example.quickclothapp.payload.request.DonationRequest;
 import org.example.quickclothapp.payload.response.MessageResponse;
 import org.example.quickclothapp.service.intf.IClotheService;
 import org.springframework.http.ResponseEntity;

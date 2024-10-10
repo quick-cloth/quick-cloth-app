@@ -1,7 +1,9 @@
 package org.example.quickclothapp.payload.response;
 
 import lombok.*;
+import org.example.quickclothapp.model.City;
 import org.example.quickclothapp.model.ContactUser;
+import org.example.quickclothapp.model.TypeMeetUs;
 
 import java.math.BigInteger;
 import java.time.LocalDate;
@@ -20,7 +22,7 @@ public class FoundationResponse {
     private String legalRepresentative;
     private String email;
     private LocalDate creationDate;
-    private String typeMeetUsName;
+    private TypeMeetUs typeMeetUs;
     private ContactUser contactUser;
-    private String city;
+    private City city;
 }

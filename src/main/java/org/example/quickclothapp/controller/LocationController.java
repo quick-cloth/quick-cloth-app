@@ -1,4 +1,4 @@
-package org.example.quickclothapp.cotroller;
+package org.example.quickclothapp.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -6,7 +6,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.example.quickclothapp.exception.DataServiceException;
 import org.example.quickclothapp.model.Department;
-import org.example.quickclothapp.model.TypeMeetUs;
 import org.example.quickclothapp.payload.response.CityResponse;
 import org.example.quickclothapp.payload.response.MessageResponse;
 import org.example.quickclothapp.service.intf.ILocationService;

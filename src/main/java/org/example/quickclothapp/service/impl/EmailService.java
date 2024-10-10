@@ -90,4 +90,29 @@ public class EmailService implements IEmailService {
             loggerEmailService.error("Error sending email: " + e.getMessage());
         }
     }
+
+    @Override
+    public void sendEmailNewUser(User user, EmailRequest emailRequest){
+        try{
+            MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage,true, "utf-8");
+
+            helper.setTo(emailRequest.getTo());
+            helper.setSubject(emailRequest.getSubject());
+
+            Context context = new Context();
+            context.setVariable("full_name", String.format("Hola %s %s,", user.getName(), user.getLast_name()));
+            context.setVariable("user_name", String.format("Usuario: %s", user.getUser_name()));
+            context.setVariable("password", String.format("Contraseña: %s", "12345"));
+
+            String html = templateEngine.process("welcome-email", context);
+            helper.setText(html, true);
+            javaMailSender.send(mimeMessage);
+
+            loggerEmailService.info("Email sent successfully to: " + emailRequest.getTo());
+
+        }catch (Exception e){
+            loggerEmailService.error("Error sending email: " + e.getMessage());
+        }
+    }
 }
