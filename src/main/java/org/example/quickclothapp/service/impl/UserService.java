@@ -271,15 +271,15 @@ public class UserService implements IUserService, UserDetailsService {
 
     private void validateUserInsert(UserRequest userRequest) throws DataServiceException {
         if(userDataService.findUserByDocumentNumber(userRequest.getDocumentNumber()) != null){
-            throw new DataServiceException("User document already exists", 400);
+            throw new DataServiceException("User document already exists", 409);
         }
 
         if (userDataService.findUserByEmail(userRequest.getEmail()) != null){
-            throw new DataServiceException("User email already exists", 400);
+            throw new DataServiceException("User email already exists", 409);
         }
 
         if (userDataService.findUserByPhoneNumber(String.valueOf(userRequest.getPhone())) != null){
-            throw new DataServiceException("User phone already exists", 400);
+            throw new DataServiceException("User phone already exists", 409);
         }
     }
 

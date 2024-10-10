@@ -10,6 +10,7 @@ import org.example.quickclothapp.payload.request.UserRequest;
 import org.example.quickclothapp.payload.response.MessageResponse;
 import org.example.quickclothapp.payload.response.UserResponse;
 import org.example.quickclothapp.service.intf.IUserService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,6 +33,9 @@ public class UserController {
         try {
             return ResponseEntity.ok(userService.saveUserClient(user));
         } catch (DataServiceException e) {
+            if (e.getStatusCode() == 409){
+                return new ResponseEntity<>(new MessageResponse(e.getMessage(), e.getStatusCode(), null), HttpStatus.CONFLICT);
+            }
             return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage(), e.getStatusCode(), null));
         }
     }
@@ -44,6 +48,9 @@ public class UserController {
         try {
             return ResponseEntity.ok(userService.saveUserDonor(user));
         } catch (DataServiceException e) {
+            if (e.getStatusCode() == 409){
+                return new ResponseEntity<>(new MessageResponse(e.getMessage(), e.getStatusCode(), null), HttpStatus.CONFLICT);
+            }
             return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage(), e.getStatusCode(), null));
         }
     }
@@ -56,6 +63,9 @@ public class UserController {
         try {
             return ResponseEntity.ok(userService.saveUserFoundation(user, foundationUuid));
         } catch (DataServiceException e) {
+            if (e.getStatusCode() == 409){
+                return new ResponseEntity<>(new MessageResponse(e.getMessage(), e.getStatusCode(), null), HttpStatus.CONFLICT);
+            }
             return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage(), e.getStatusCode(), null));
         }
     }
@@ -69,6 +79,9 @@ public class UserController {
         try {
             return ResponseEntity.ok(userService.saveUserBank(user, clotheBankUuid));
         } catch (DataServiceException e) {
+            if (e.getStatusCode() == 409){
+                return new ResponseEntity<>(new MessageResponse(e.getMessage(), e.getStatusCode(), null), HttpStatus.CONFLICT);
+            }
             return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage(), e.getStatusCode(), null));
         }
     }
@@ -81,6 +94,9 @@ public class UserController {
         try {
             return ResponseEntity.ok(userService.saveUserWardrope(user, wardRopeUuid));
         } catch (DataServiceException e) {
+            if (e.getStatusCode() == 409){
+                return new ResponseEntity<>(new MessageResponse(e.getMessage(), e.getStatusCode(), null), HttpStatus.CONFLICT);
+            }
             return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage(), e.getStatusCode(), null));
         }
     }

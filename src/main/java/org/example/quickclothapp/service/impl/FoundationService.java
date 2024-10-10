@@ -97,9 +97,11 @@ public class FoundationService implements IFoundationService {
                             .nit(f.getNit())
                             .phone(f.getPhone())
                             .email(f.getEmail())
+                            .legalRepresentative(f.getLegal_representative())
                             .creationDate(f.getCreation_date())
                             .typeMeetUsName(f.getTypeMeetUs().getName())
                             .contactUser(f.getContactUser())
+                            .city(f.getCity().getName())
                             .build()
             );
         }
@@ -118,7 +120,9 @@ public class FoundationService implements IFoundationService {
                 .phone(f.getPhone())
                 .email(f.getEmail())
                 .creationDate(f.getCreation_date())
+                .legalRepresentative(f.getLegal_representative())
                 .typeMeetUsName(f.getTypeMeetUs().getName())
+                .city(f.getCity().getName())
                 .contactUser(f.getContactUser())
                 .build();
     }

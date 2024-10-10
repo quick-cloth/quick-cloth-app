@@ -22,4 +22,5 @@ public class FoundationResponse {
     private LocalDate creationDate;
     private String typeMeetUsName;
     private ContactUser contactUser;
+    private String city;
 }
