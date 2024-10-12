@@ -69,6 +69,17 @@ public class ClotheService implements IClotheService {
                 .typeStage(typeStage)
                 .build();
 
+        if(clothe == null){
+            clothe = clotheDataService.saveClothe(
+                    Clothe.builder()
+                            .uuid(UUID.randomUUID())
+                            .typeClothe(typeClothe)
+                            .typeGender(typeGender)
+                            .typeStage(typeStage)
+                            .build()
+            );
+        }
+
         return clotheDataService.findClotheByAllTypes(clothe);
     }
 
