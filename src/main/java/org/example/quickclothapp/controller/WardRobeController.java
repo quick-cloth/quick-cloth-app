@@ -8,6 +8,7 @@ import org.example.quickclothapp.exception.DataServiceException;
 import org.example.quickclothapp.exception.WardRopeServiceExpetion;
 import org.example.quickclothapp.model.Clothe;
 import org.example.quickclothapp.model.OrderState;
+import org.example.quickclothapp.model.TopSellingClothes;
 import org.example.quickclothapp.payload.request.OrderRequest;
 import org.example.quickclothapp.payload.request.SaleRequest;
 import org.example.quickclothapp.payload.request.WardRobeRequest;
@@ -215,6 +216,8 @@ public class WardRobeController {
 
 
     @Operation(summary = "Obtener las prendas mas vendidas en un ropero", description = "Obtiene las prendas mas vendidas en un ropero, dado el uuid del ropero")
+    @ApiResponse(responseCode = "200", description = "La lista de tipos de estado de orden", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = TopSellingClothes.class))})
+    @ApiResponse(responseCode = "400", description = "El valor mensaje retorna el mensaje de error", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = MessageResponse.class))})
     @GetMapping("/top_selling_clothes")
     public ResponseEntity<?> getTopSellingClothes(@RequestParam UUID wardrobeUuid) {
         try {
