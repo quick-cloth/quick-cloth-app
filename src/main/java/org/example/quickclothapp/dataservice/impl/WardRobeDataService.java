@@ -6,6 +6,7 @@ import org.example.quickclothapp.model.*;
 import org.example.quickclothapp.payload.request.OrderDataRequest;
 import org.example.quickclothapp.payload.request.SaleDataRequest;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
@@ -272,6 +273,33 @@ public class WardRobeDataService implements IWardRopeDataService {
         }catch (HttpClientErrorException e) {
             throw new DataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
         }
+    }
+
+    @Override
+    public List<TopSellingClothes> getTopSellingClothes(UUID wardrobeUuid) throws DataServiceException {
+
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+
+            HttpEntity<?> request = new HttpEntity<>(headers);
+
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(apiServerUrl + "ward_rope/top_selling_clothes")
+                    .queryParam("wardRobeUuid", wardrobeUuid);
+
+            ResponseEntity<List<TopSellingClothes>> responseEntity = restTemplate.exchange(
+                    builder.toUriString(),
+                    HttpMethod.GET,
+                    request,
+                    new ParameterizedTypeReference<List<TopSellingClothes>>() {}
+            );
+
+            return responseEntity.getBody();
+        }
+        catch (HttpClientErrorException e) {
+            throw new DataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
+        }
+
     }
 
 }

@@ -213,4 +213,15 @@ public class WardRobeController {
         }
     }
 
+
+    @Operation(summary = "Obtener las prendas mas vendidas en un ropero", description = "Obtiene las prendas mas vendidas en un ropero, dado el uuid del ropero")
+    @GetMapping("/top_selling_clothes")
+    public ResponseEntity<?> getTopSellingClothes(@RequestParam UUID wardrobeUuid) {
+        try {
+            return ResponseEntity.ok(wardRopeService.getTopSellingClothes(wardrobeUuid));
+        } catch (DataServiceException e) {
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage(), null, null));
+        }
+    }
+
 }

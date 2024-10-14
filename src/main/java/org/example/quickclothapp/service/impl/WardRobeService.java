@@ -647,4 +647,11 @@ public class WardRobeService implements IWardRobeService {
         return i.getClothe();
     }
 
+
+    @Override
+    public List<TopSellingClothes> getTopSellingClothes(UUID wardrobeUuid) throws DataServiceException {
+
+        return wardRopeDataService.getTopSellingClothes(wardrobeUuid);
+    }
+
 }
