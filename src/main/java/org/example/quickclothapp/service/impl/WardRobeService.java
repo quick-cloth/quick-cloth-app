@@ -546,6 +546,9 @@ public class WardRobeService implements IWardRobeService {
         return saleWardRobeResponse;
     }
 
+    // TODO: Call /api/v1/data/ward_rope/customers/get?wardRobeUuid={}&clotheUuids={}
+    // This gets the customers that have bought the same clothes as the current wardrobe
+    // send an email to the customers that have bought the same clothes as the current wardrobe
     @Override
     public MessageResponse confirmOrder(OrderRequest orderRequest, UUID orderUuid) throws DataServiceException {
         Order order = clotheBankService.findOrderByUuid(orderUuid);
@@ -650,6 +653,10 @@ public class WardRobeService implements IWardRobeService {
     public List<TopSellingClothes> getTopSellingClothes(UUID wardrobeUuid) throws DataServiceException {
 
         return wardRopeDataService.getTopSellingClothes(wardrobeUuid);
+    }
+    
+    public int calculatePoints(double totalValue){
+        return (int) ((totalValue/AMOUNT_PER_POINT) * POINTS_PER_1000);
     }
 
 }

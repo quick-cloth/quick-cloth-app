@@ -5,6 +5,8 @@ import org.example.quickclothapp.model.TypeDocument;
 import org.example.quickclothapp.model.User;
 import org.example.quickclothapp.payload.request.UserRequest;
 import org.example.quickclothapp.payload.response.MessageResponse;
+import org.example.quickclothapp.payload.response.SalesByUserResponse;
+import org.example.quickclothapp.payload.response.SalesByUserWithPointsResponse;
 import org.example.quickclothapp.payload.response.UserResponse;
 
 import java.util.List;
@@ -22,4 +24,5 @@ public interface IUserService {
     UserResponse UserWardRobeByUsername(String username) throws DataServiceException;
     UserResponse findBankEmployeeByUsername(String username) throws DataServiceException;
     List<TypeDocument> findAllTypeDocument() throws DataServiceException;
+    List<SalesByUserWithPointsResponse> findSalesByUser(UUID userUuid) throws DataServiceException;
 }

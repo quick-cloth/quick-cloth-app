@@ -8,11 +8,10 @@ import org.example.quickclothapp.exception.DataServiceException;
 import org.example.quickclothapp.model.*;
 import org.example.quickclothapp.payload.request.*;
 import org.example.quickclothapp.payload.response.MessageResponse;
+import org.example.quickclothapp.payload.response.SalesByUserResponse;
+import org.example.quickclothapp.payload.response.SalesByUserWithPointsResponse;
 import org.example.quickclothapp.payload.response.UserResponse;
-import org.example.quickclothapp.service.intf.IEmailService;
-import org.example.quickclothapp.service.intf.IFoundationService;
-import org.example.quickclothapp.service.intf.IUserNameService;
-import org.example.quickclothapp.service.intf.IUserService;
+import org.example.quickclothapp.service.intf.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -22,6 +21,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.lang.model.type.IntersectionType;
 import java.math.BigInteger;
 import java.time.LocalDate;
 import java.util.*;
@@ -29,6 +29,8 @@ import java.util.*;
 @Service
 public class UserService implements IUserService, UserDetailsService {
 
+    private static final int AMOUNT_PER_POINT = 1000;
+    private static final int POINTS_PER_1000 = 4;
     private final IUserDataService userDataService;
     private final IFoundationService foundationService;
     private final IClotheBankDataService clotheBankService;
@@ -51,6 +53,7 @@ public class UserService implements IUserService, UserDetailsService {
 
     @Value("${api-server-rol-wardRope-employee}")
     private String wardRopeEmployeeRol;
+    
 
     public UserService(IUserDataService userDataService, IFoundationService foundationService, IClotheBankDataService clotheBankService, IWardRopeDataService wardRopeService, BCryptPasswordEncoder bcryptEncoder, IUserNameService userNameService, IEmailService emailService) {
         this.userDataService = userDataService;
@@ -294,6 +297,40 @@ public class UserService implements IUserService, UserDetailsService {
     @Override
     public List<TypeDocument> findAllTypeDocument() throws DataServiceException {
         return userDataService.findAllTypeDocument();
+    }
+
+    @Override
+    public List<SalesByUserWithPointsResponse> findSalesByUser(UUID userUuid) throws DataServiceException {
+        
+        List<SalesByUserResponse> salesWithOutPoints = userDataService.findSalesByUser(userUuid);
+       
+        List<SalesByUserWithPointsResponse> salesWithPoints = new ArrayList<>();
+        
+        for ( SalesByUserResponse sale : salesWithOutPoints){
+
+            SalesByUserWithPointsResponse newSale = getSalesByUserWithPointsResponse(sale);
+
+            salesWithPoints.add(newSale);
+        }
+        
+        return  salesWithPoints;
+    }
+
+    private static SalesByUserWithPointsResponse getSalesByUserWithPointsResponse(SalesByUserResponse sale) {
+        int points = (int) ((sale.getValue()/AMOUNT_PER_POINT) * POINTS_PER_1000);
+
+        if ( sale.getPayPoints().compareTo(BigInteger.ZERO) > 0){
+            points = 0;
+        }
+
+        return new SalesByUserWithPointsResponse(
+            sale.getUuid(),
+            sale.getSaleDate(),
+            sale.getValue(),
+            sale.getPayPoints(),
+            sale.getWardrobe(), 
+            points
+        );
     }
 
     private void validateUserInsert(UserRequest userRequest) throws DataServiceException {

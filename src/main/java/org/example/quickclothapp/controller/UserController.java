@@ -8,6 +8,8 @@ import org.example.quickclothapp.exception.DataServiceException;
 import org.example.quickclothapp.model.TypeDocument;
 import org.example.quickclothapp.payload.request.UserRequest;
 import org.example.quickclothapp.payload.response.MessageResponse;
+import org.example.quickclothapp.payload.response.SalesByUserResponse;
+import org.example.quickclothapp.payload.response.SalesByUserWithPointsResponse;
 import org.example.quickclothapp.payload.response.UserResponse;
 import org.example.quickclothapp.service.intf.IUserService;
 import org.springframework.http.HttpStatus;
@@ -147,6 +149,18 @@ public class UserController {
     public ResponseEntity<?> getAllTypeDocument() {
         try {
             return ResponseEntity.ok(userService.findAllTypeDocument());
+        } catch (DataServiceException e) {
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage(), null, null));
+        }
+    }
+
+    @Operation(summary = "Obtener las ventas de un usuario", description = "Obtiene las ventas de un usuario dado su uuid")
+    @ApiResponse(responseCode = "200", description = "Las compras que ha hecho el usuario", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = SalesByUserWithPointsResponse.class))})
+    @ApiResponse(responseCode = "400", description = "El valor mensaje retorna el mensaje de error", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = MessageResponse.class))})
+    @GetMapping("/sales/get_all")
+    public ResponseEntity<?> findSalesByUser(@RequestParam UUID uuid){
+        try {
+        return ResponseEntity.ok(userService.findSalesByUser(uuid));
         } catch (DataServiceException e) {
             return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage(), null, null));
         }

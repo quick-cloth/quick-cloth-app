@@ -6,6 +6,7 @@ import org.example.quickclothapp.model.*;
 import org.example.quickclothapp.payload.request.BankEmployeeRequest;
 import org.example.quickclothapp.payload.request.FoundationEmployeeRequest;
 import org.example.quickclothapp.payload.request.WardrobeEmployeeRequest;
+import org.example.quickclothapp.payload.response.SalesByUserResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -252,6 +253,26 @@ public class UserDataService implements IUserDataService {
             UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(apiServerUrl + "user/type_document/get_all");
 
             return List.of(restTemplate.getForObject(builder.toUriString(), TypeDocument[].class));
+        }
+        catch (HttpClientErrorException e){
+            throw new DataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
+        }
+    }
+
+    @Override
+    public List<SalesByUserResponse> findSalesByUser(UUID userUuid) throws DataServiceException {
+        
+        try {
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(apiServerUrl + "user/sales/get")
+                    .queryParam("userUuid", userUuid);
+
+            ResponseEntity<SalesByUserResponse[]> responseEntity = restTemplate.exchange(
+                    builder.toUriString(),
+                    HttpMethod.GET,
+                    null,
+                    SalesByUserResponse[].class);
+
+            return List.of(responseEntity.getBody());
         }
         catch (HttpClientErrorException e){
             throw new DataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());

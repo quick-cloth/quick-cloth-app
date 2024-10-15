@@ -33,4 +33,5 @@ public interface IWardRobeService {
     List<OrderResponseWardRobe> findOrdersByWardRopeUuid(UUID wardRobeUuid) throws DataServiceException;
     Clothe findInventoryByClotheUuid(UUID typeClotheUuid, UUID typeGenderUuid, UUID typeStageUuid, UUID wardRopeUuid) throws DataServiceException;
     List<TopSellingClothes> getTopSellingClothes(UUID wardrobeUuid) throws DataServiceException;
+    int calculatePoints(double totalValue);
 }
