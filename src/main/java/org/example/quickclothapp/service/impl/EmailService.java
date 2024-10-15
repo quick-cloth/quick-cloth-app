@@ -2,11 +2,9 @@ package org.example.quickclothapp.service.impl;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
-import org.example.quickclothapp.model.Campaign;
-import org.example.quickclothapp.model.Sale;
-import org.example.quickclothapp.model.SaleList;
-import org.example.quickclothapp.model.User;
+import org.example.quickclothapp.model.*;
 import org.example.quickclothapp.payload.request.EmailRequest;
+import org.example.quickclothapp.payload.request.EmailsRequest;
 import org.example.quickclothapp.payload.response.CampaignResponse;
 import org.example.quickclothapp.service.intf.IEmailService;
 import org.slf4j.Logger;
@@ -115,4 +113,30 @@ public class EmailService implements IEmailService {
             loggerEmailService.error("Error sending email: " + e.getMessage());
         }
     }
+    
+    @Override
+    public void sendEmailNewClothes(List<Clothe> clothes, Wardrobe wardrobe, EmailsRequest emailsRequest) {
+        try {
+            MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "utf-8");
+
+            helper.setTo(emailsRequest.getTo());
+            helper.setSubject(emailsRequest.getSubject());
+
+            Context context = new Context();
+            context.setVariable("wardrobe_name", wardrobe.getName());
+            context.setVariable("wardrobe_address", wardrobe.getAddress());
+            context.setVariable("clothes", clothes);
+
+            String html = templateEngine.process("new-clothes-template", context);
+            helper.setText(html, true);
+            javaMailSender.send(mimeMessage);
+
+            loggerEmailService.info("Email sent successfully to: " + emailsRequest.getTo());
+
+        } catch (MessagingException e) {
+            loggerEmailService.error("Error sending email: " + e.getMessage());
+        }
+    }
+
 }
