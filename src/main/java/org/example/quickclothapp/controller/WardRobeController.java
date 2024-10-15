@@ -227,13 +227,13 @@ public class WardRobeController {
         }
     }
     
-    @GetMapping("/minimum_stocks/get")
-    public ResponseEntity<?> getMinimumStocks(@RequestParam UUID wardrobeUuid) {
-        try {
-            return ResponseEntity.ok(wardRopeService.getMinimumStocks(wardrobeUuid));
-        } catch (DataServiceException e) {
-            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage(), null, null));
-        }
-    }
+//    @GetMapping("/minimum_stocks/get")
+//    public ResponseEntity<?> getMinimumStocks(@RequestParam UUID wardrobeUuid) {
+//        try {
+//            return ResponseEntity.ok(wardRopeService.getMinimumStocks(wardrobeUuid));
+//        } catch (DataServiceException e) {
+//            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage(), null, null));
+//        }
+//    }
 
 }

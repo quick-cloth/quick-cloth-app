@@ -32,5 +32,5 @@ public interface IWardRobeService {
     List<TopSellingClothes> getTopSellingClothes(UUID wardrobeUuid) throws DataServiceException;
     int calculatePoints(double totalValue);
 
-    Inventory getMinimumStocks(UUID wardrobeUuid);
+//    Inventory getMinimumStocks(UUID wardrobeUuid);
 }
