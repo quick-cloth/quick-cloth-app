@@ -6,6 +6,8 @@ import org.example.quickclothapp.model.Clothe;
 import org.example.quickclothapp.model.TypeClothe;
 import org.example.quickclothapp.model.TypeGender;
 import org.example.quickclothapp.model.TypeStage;
+import org.example.quickclothapp.payload.request.ClotheByAllTypesRequest;
+import org.example.quickclothapp.payload.request.ClotheRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -116,12 +118,15 @@ public class ClotheDataService implements IClotheDataService {
     }
 
     @Override
-    public Clothe findClotheByAllTypes(Clothe clothe) throws DataServiceException {
+    public Clothe findClotheByAllTypes(UUID typeClotheUuid, UUID typeGenderUuid, UUID typeStageUuid) throws DataServiceException {
         try {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
 
-            HttpEntity<Clothe> request = new HttpEntity<>(clothe, headers);
+            ClotheByAllTypesRequest clotheRequest = new ClotheByAllTypesRequest(typeClotheUuid, typeGenderUuid, typeStageUuid);
+
+
+            HttpEntity<ClotheByAllTypesRequest> request = new HttpEntity<>(clotheRequest ,headers);
 
             ResponseEntity<Clothe> responseEntity = restTemplate.exchange(
                     apiServerUrl + "clothe/get_by_all_types",

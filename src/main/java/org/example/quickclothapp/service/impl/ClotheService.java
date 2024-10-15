@@ -59,28 +59,34 @@ public class ClotheService implements IClotheService {
 
     @Override
     public Clothe findClotheByAllTypes(UUID typeClotheUuid, UUID typeGenderUuid, UUID typeStageUuid) throws DataServiceException{
-        TypeClothe typeClothe = clotheDataService.findTypeClotheByUuid(typeClotheUuid);
-        TypeGender typeGender = clotheDataService.findTypeGenderByUuid(typeGenderUuid);
-        TypeStage typeStage = clotheDataService.findTypeStageByUuid(typeStageUuid);
+//        TypeClothe typeClothe = clotheDataService.findTypeClotheByUuid(typeClotheUuid);
+//        TypeGender typeGender = clotheDataService.findTypeGenderByUuid(typeGenderUuid);
+//        TypeStage typeStage = clotheDataService.findTypeStageByUuid(typeStageUuid);
 
-        Clothe clothe = Clothe.builder()
-                .typeClothe(typeClothe)
-                .typeGender(typeGender)
-                .typeStage(typeStage)
-                .build();
+//        Clothe clothe = Clothe.builder()
+//                .typeClothe(typeClothe)
+//                .typeGender(typeGender)
+//                .typeStage(typeStage)
+//                .build();
+        
+        Clothe clothe = clotheDataService.findClotheByAllTypes(
+                typeClotheUuid,
+                typeGenderUuid,
+                typeStageUuid
+        );
+        
+//        if(clothe == null){
+//            clothe = clotheDataService.saveClothe(
+//                    Clothe.builder()
+//                            .uuid(UUID.randomUUID())
+//                            .typeClothe(typeClothe)
+//                            .typeGender(typeGender)
+//                            .typeStage(typeStage)
+//                            .build()
+//            );
+//        }
 
-        if(clothe == null){
-            clothe = clotheDataService.saveClothe(
-                    Clothe.builder()
-                            .uuid(UUID.randomUUID())
-                            .typeClothe(typeClothe)
-                            .typeGender(typeGender)
-                            .typeStage(typeStage)
-                            .build()
-            );
-        }
-
-        return clotheDataService.findClotheByAllTypes(clothe);
+        return clothe;
     }
 
     @Override
