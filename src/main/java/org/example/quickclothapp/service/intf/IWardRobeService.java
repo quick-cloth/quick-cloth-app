@@ -2,10 +2,7 @@ package org.example.quickclothapp.service.intf;
 
 import org.example.quickclothapp.exception.DataServiceException;
 import org.example.quickclothapp.exception.WardRopeServiceExpetion;
-import org.example.quickclothapp.model.Clothe;
-import org.example.quickclothapp.model.OrderState;
-import org.example.quickclothapp.model.TopSellingClothes;
-import org.example.quickclothapp.model.Wardrobe;
+import org.example.quickclothapp.model.*;
 import org.example.quickclothapp.payload.request.OrderRequest;
 import org.example.quickclothapp.payload.request.SaleRequest;
 import org.example.quickclothapp.payload.request.WardRobeRequest;
@@ -34,4 +31,6 @@ public interface IWardRobeService {
     Clothe findInventoryByClotheUuid(UUID typeClotheUuid, UUID typeGenderUuid, UUID typeStageUuid, UUID wardRopeUuid) throws DataServiceException;
     List<TopSellingClothes> getTopSellingClothes(UUID wardrobeUuid) throws DataServiceException;
     int calculatePoints(double totalValue);
+
+    Inventory getMinimumStocks(UUID wardrobeUuid);
 }
