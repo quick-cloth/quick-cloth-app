@@ -15,4 +15,5 @@ public class InventoryResponse {
     private UUID uuid;
     private Clothe clothe;
     private Integer stock;
+    private Integer minimumStock;
 }

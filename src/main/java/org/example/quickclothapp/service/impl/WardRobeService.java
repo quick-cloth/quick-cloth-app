@@ -403,6 +403,7 @@ public class WardRobeService implements IWardRobeService {
                       .uuid(i.getUuid())
                       .stock(i.getStock())
                       .clothe(i.getClothe())
+                      .minimumStock(i.getMinimum_stock())
                       .build()
             );
         }
