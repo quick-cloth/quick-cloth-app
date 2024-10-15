@@ -7,6 +7,7 @@ import org.example.quickclothapp.payload.request.CreateMinimumStockRequest;
 import org.example.quickclothapp.payload.request.OrderDataRequest;
 import org.example.quickclothapp.payload.request.SaleDataRequest;
 import org.example.quickclothapp.payload.response.CreateMinimumStockResponse;
+import org.example.quickclothapp.payload.response.CustomerResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
@@ -325,5 +326,30 @@ public class WardRobeDataService implements IWardRopeDataService {
             throw new DataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
         }
     }
+    
+    @Override
+    public List<CustomerResponse> findCustomersByWardrobeAndClothes(UUID wardrobeUuid, List<UUID> clotheUuids) throws DataServiceException {
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
 
+            HttpEntity<?> request = new HttpEntity<>(headers);
+
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(apiServerUrl + "ward_rope/customers/get")
+                    .queryParam("wardrobeUuid", wardrobeUuid)
+                    .queryParam("clotheUuids", clotheUuids);
+
+            ResponseEntity<List<CustomerResponse>> responseEntity = restTemplate.exchange(
+                    builder.toUriString(),
+                    HttpMethod.GET,
+                    request,
+                    new ParameterizedTypeReference<List<CustomerResponse>>() {}
+            );
+
+            return responseEntity.getBody();
+        }
+        catch (HttpClientErrorException e) {
+            throw new DataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
+        }
+    }
 }

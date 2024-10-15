@@ -1,5 +1,7 @@
 package org.example.quickclothapp.service.impl;
 
+import org.example.quickclothapp.dataservice.impl.ClotheDataService;
+import org.example.quickclothapp.dataservice.intf.IClotheDataService;
 import org.example.quickclothapp.dataservice.intf.ILocationDataService;
 import org.example.quickclothapp.dataservice.intf.IUserDataService;
 import org.example.quickclothapp.dataservice.intf.IWardRopeDataService;
@@ -24,6 +26,7 @@ import java.util.*;
 public class WardRobeService implements IWardRobeService {
 
     private final IWardRopeDataService wardRopeDataService;
+    private final IClotheDataService clotheDataService;
     private final ILocationDataService locationDataService;
     private final IClotheBankService clotheBankService;
     private final IUserDataService userDataService;
@@ -37,13 +40,14 @@ public class WardRobeService implements IWardRobeService {
     @Value("${api-server-order-state-delivered}")
     private String orderStateDelivered;
 
-    public WardRobeService(IWardRopeDataService wardRopeDataService, ILocationDataService locationDataService, IClotheBankService clotheBankService, IUserDataService userDataService, IClotheService clotheService, IEmailService emailService) {
+    public WardRobeService(IWardRopeDataService wardRopeDataService, ILocationDataService locationDataService, IClotheBankService clotheBankService, IUserDataService userDataService, IClotheService clotheService, IEmailService emailService, IClotheDataService clotheDataService) {
         this.wardRopeDataService = wardRopeDataService;
         this.locationDataService = locationDataService;
         this.clotheBankService = clotheBankService;
         this.userDataService = userDataService;
         this.clotheService = clotheService;
         this.emailService = emailService;
+        this.clotheDataService = clotheDataService;
     }
 
     @Override
@@ -546,16 +550,13 @@ public class WardRobeService implements IWardRobeService {
 
         return saleWardRobeResponse;
     }
-
-    // TODO: Call /api/v1/data/ward_rope/customers/get?wardRobeUuid={}&clotheUuids={}
-    // This gets the customers that have bought the same clothes as the current wardrobe
-    // send an email to the customers that have bought the same clothes as the current wardrobe
+    
     @Override
     public MessageResponse confirmOrder(OrderRequest orderRequest, UUID orderUuid) throws DataServiceException {
         Order order = clotheBankService.findOrderByUuid(orderUuid);
 
         OrderState orderState = wardRopeDataService.findOrderStateByName(orderStateDelivered);
-
+        
         Map<UUID, Integer> mapClothesRequest = new HashMap<>();
 
         List<OrderList> orderList = clotheBankService.findOrderListByOrder(order.getUuid());
@@ -578,6 +579,27 @@ public class WardRobeService implements IWardRobeService {
                 .build();
 
         wardRopeDataService.confirmOrder(or);
+        
+        // Get the clothes uuids from the order request
+        List<UUID> clotheUuids = new ArrayList<>();
+        
+        for (ClotheRequest cr : orderRequest.getClothes()) {
+            clotheUuids.add(cr.getClotheUuid());
+        }
+        
+        // Get the customers that have bought the same clothes as the current wardrobe
+        List<CustomerResponse> customers = wardRopeDataService.findCustomersByWardrobeAndClothes(order.getWardrobe().getUuid(), clotheUuids);
+        
+        // Get the clothes from the clothe data service
+        List<Clothe> clothes = clotheDataService.findByUuids(clotheUuids);
+        
+        // Send email to customers that have bought the same clothes as the current wardrobe
+        emailService.sendEmailNewClothes(clothes, order.getWardrobe(), new EmailsRequest(
+                customers.stream().map(CustomerResponse::getEmail).toArray(String[]::new),
+                "Nuevo stock disponible en nuestra tienda",
+                "Tenemos nuevos productos en nuestra tienda, ven a verlos"
+        ) );
+        
 
         return new MessageResponse("Order confirmation successfully with state : " + orderStateDelivered, null, order.getUuid());
     }

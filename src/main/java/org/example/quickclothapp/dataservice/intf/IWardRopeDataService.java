@@ -6,6 +6,7 @@ import org.example.quickclothapp.payload.request.CreateMinimumStockRequest;
 import org.example.quickclothapp.payload.request.OrderDataRequest;
 import org.example.quickclothapp.payload.request.SaleDataRequest;
 import org.example.quickclothapp.payload.response.CreateMinimumStockResponse;
+import org.example.quickclothapp.payload.response.CustomerResponse;
 
 import java.util.List;
 import java.util.UUID;
@@ -27,4 +28,5 @@ public interface IWardRopeDataService {
     void saveSendEmail(SendEmail sendEmail) throws DataServiceException;
     List<TopSellingClothes> getTopSellingClothes(UUID wardrobeUuid) throws DataServiceException;
     List<CreateMinimumStockResponse> saveMinimumStocks(List<CreateMinimumStockRequest> minimumStocksRequest) throws DataServiceException;
+    List<CustomerResponse> findCustomersByWardrobeAndClothes(UUID wardrobeUuid, List<UUID> clotheUuids) throws DataServiceException;
 }
