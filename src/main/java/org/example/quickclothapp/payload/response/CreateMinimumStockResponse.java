@@ -9,6 +9,7 @@ import java.util.UUID;
 @Data
 @AllArgsConstructor
 public class CreateMinimumStockResponse {
+    private UUID inventoryUuid;
     private Integer stock;
     private Integer minimumStock;
     private UUID wardrobeUuid;
