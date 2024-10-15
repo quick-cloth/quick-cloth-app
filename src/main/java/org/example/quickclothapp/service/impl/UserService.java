@@ -316,6 +316,22 @@ public class UserService implements IUserService, UserDetailsService {
         return  salesWithPoints;
     }
 
+    @Override
+    public UserResponse findUserByUsername(String username) throws DataServiceException {
+        User user = userDataService.findUserByUserName(username);
+
+        if(user == null){
+            throw new DataServiceException("User not found", 404);
+        }
+
+        return UserResponse.builder()
+                .uuid(user.getUuid())
+                .name(user.getName())
+                .lastName(user.getLast_name())
+                .email(user.getEmail())
+                .build();
+    }
+
     private static SalesByUserWithPointsResponse getSalesByUserWithPointsResponse(SalesByUserResponse sale) {
         int points = (int) ((sale.getValue()/AMOUNT_PER_POINT) * POINTS_PER_1000);
 

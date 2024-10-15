@@ -25,4 +25,5 @@ public interface IUserService {
     UserResponse findBankEmployeeByUsername(String username) throws DataServiceException;
     List<TypeDocument> findAllTypeDocument() throws DataServiceException;
     List<SalesByUserWithPointsResponse> findSalesByUser(UUID userUuid) throws DataServiceException;
+    UserResponse findUserByUsername(String username) throws DataServiceException;
 }
