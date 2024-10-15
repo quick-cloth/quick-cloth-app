@@ -6,11 +6,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.example.quickclothapp.exception.DataServiceException;
 import org.example.quickclothapp.model.TypeDocument;
+import org.example.quickclothapp.model.User;
 import org.example.quickclothapp.payload.request.UserRequest;
-import org.example.quickclothapp.payload.response.MessageResponse;
-import org.example.quickclothapp.payload.response.SalesByUserResponse;
-import org.example.quickclothapp.payload.response.SalesByUserWithPointsResponse;
-import org.example.quickclothapp.payload.response.UserResponse;
+import org.example.quickclothapp.payload.response.*;
 import org.example.quickclothapp.service.intf.IUserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -161,6 +159,32 @@ public class UserController {
     public ResponseEntity<?> findSalesByUser(@RequestParam UUID uuid){
         try {
         return ResponseEntity.ok(userService.findSalesByUser(uuid));
+        } catch (DataServiceException e) {
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage(), null, null));
+        }
+    }
+
+    @Operation(summary = "Obtener un usuario dado su uuid", description = "Obtiene un usuario dado su uuid")
+    @ApiResponse(responseCode = "200", description = "Usuario de la aplicación", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = CustomerWithPoints.class))})
+    @ApiResponse(responseCode = "400", description = "El valor mensaje retorna el mensaje de error", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = MessageResponse.class))})
+    @GetMapping("/get")
+    public ResponseEntity<?> getUserById(@RequestParam UUID uuid) {
+        try {
+            
+            User user = userService.findUserByUuid(uuid);
+            
+            CustomerWithPoints customerWithPoints = new CustomerWithPoints(
+                    user.getUuid(),
+                    user.getName(),
+                    user.getLast_name(),
+                    user.getUser_name(),
+                    user.getEmail(),
+                    user.getDocument(),
+                    user.getDocument(),
+                    user.getPoints()
+            );
+            
+            return ResponseEntity.ok(customerWithPoints);
         } catch (DataServiceException e) {
             return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage(), null, null));
         }
