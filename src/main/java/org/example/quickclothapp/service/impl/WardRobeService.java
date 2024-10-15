@@ -402,9 +402,7 @@ public class WardRobeService implements IWardRobeService {
               InventoryResponse.builder()
                       .uuid(i.getUuid())
                       .stock(i.getStock())
-                      .clothName(i.getClothe().getTypeClothe().getName())
-                      .clothGender(i.getClothe().getTypeGender().getName())
-                      .clothStage(i.getClothe().getTypeStage().getName())
+                      .clothe(i.getClothe())
                       .build()
             );
         }
@@ -416,7 +414,7 @@ public class WardRobeService implements IWardRobeService {
         Inventory inventory = wardRopeDataService.findInventoryByClotheUuidAndWardRopeUuid(clotheUuid, wardRopeUuid);
 
         return InventoryResponse.builder()
-                .clothName(inventory.getClothe().getTypeClothe().getName())
+                .clothe(inventory.getClothe())
                 .build();
     }
 

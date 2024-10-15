@@ -1,6 +1,7 @@
 package org.example.quickclothapp.payload.response;
 
 import lombok.*;
+import org.example.quickclothapp.model.Clothe;
 
 import java.util.List;
 import java.util.UUID;
@@ -12,8 +13,6 @@ import java.util.UUID;
 @Builder
 public class InventoryResponse {
     private UUID uuid;
-    private String clothName;
-    private String clothGender;
-    private String clothStage;
+    private Clothe clothe;
     private Integer stock;
 }

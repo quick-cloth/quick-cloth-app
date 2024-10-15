@@ -14,6 +14,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -128,8 +129,7 @@ public class WardRobeDataService implements IWardRopeDataService {
                     HttpMethod.GET,
                     null,
                     Inventory[].class);
-
-            return List.of(responseEntity.getBody());
+            return List.of(Objects.requireNonNull(responseEntity.getBody()));
         } catch (HttpClientErrorException e) {
             throw new DataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
         }
