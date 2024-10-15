@@ -3,8 +3,10 @@ package org.example.quickclothapp.dataservice.impl;
 import org.example.quickclothapp.dataservice.intf.IWardRopeDataService;
 import org.example.quickclothapp.exception.DataServiceException;
 import org.example.quickclothapp.model.*;
+import org.example.quickclothapp.payload.request.CreateMinimumStockRequest;
 import org.example.quickclothapp.payload.request.OrderDataRequest;
 import org.example.quickclothapp.payload.request.SaleDataRequest;
+import org.example.quickclothapp.payload.response.CreateMinimumStockResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
@@ -300,6 +302,28 @@ public class WardRobeDataService implements IWardRopeDataService {
             throw new DataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
         }
 
+    }
+
+    @Override
+    public List<CreateMinimumStockResponse> saveMinimumStocks(List<CreateMinimumStockRequest> minimumStocksRequest) throws DataServiceException {
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            
+            HttpEntity<List<CreateMinimumStockRequest>> request = new HttpEntity<>(minimumStocksRequest, headers);
+            
+            ResponseEntity<List<CreateMinimumStockResponse>> responseEntity = restTemplate.exchange(
+                    apiServerUrl + "ward_rope/minimum_stocks/save",
+                    HttpMethod.POST,
+                    request,
+                    new ParameterizedTypeReference<List<CreateMinimumStockResponse>>() {}
+            );
+            
+            return responseEntity.getBody();
+        
+        }catch (HttpClientErrorException e) {
+            throw new DataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
+        }
     }
 
 }

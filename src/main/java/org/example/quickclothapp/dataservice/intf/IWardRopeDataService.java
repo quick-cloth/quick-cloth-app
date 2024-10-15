@@ -2,8 +2,10 @@ package org.example.quickclothapp.dataservice.intf;
 
 import org.example.quickclothapp.exception.DataServiceException;
 import org.example.quickclothapp.model.*;
+import org.example.quickclothapp.payload.request.CreateMinimumStockRequest;
 import org.example.quickclothapp.payload.request.OrderDataRequest;
 import org.example.quickclothapp.payload.request.SaleDataRequest;
+import org.example.quickclothapp.payload.response.CreateMinimumStockResponse;
 
 import java.util.List;
 import java.util.UUID;
@@ -24,4 +26,5 @@ public interface IWardRopeDataService {
     List<Order> findOrdersByWardRobeUuid(UUID wardRobeUuid) throws DataServiceException;
     void saveSendEmail(SendEmail sendEmail) throws DataServiceException;
     List<TopSellingClothes> getTopSellingClothes(UUID wardrobeUuid) throws DataServiceException;
+    List<CreateMinimumStockResponse> saveMinimumStocks(List<CreateMinimumStockRequest> minimumStocksRequest) throws DataServiceException;
 }

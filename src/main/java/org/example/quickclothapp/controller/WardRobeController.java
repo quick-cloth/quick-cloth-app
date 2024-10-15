@@ -9,6 +9,7 @@ import org.example.quickclothapp.exception.WardRopeServiceExpetion;
 import org.example.quickclothapp.model.Clothe;
 import org.example.quickclothapp.model.OrderState;
 import org.example.quickclothapp.model.TopSellingClothes;
+import org.example.quickclothapp.payload.request.CreateMinimumStockRequest;
 import org.example.quickclothapp.payload.request.OrderRequest;
 import org.example.quickclothapp.payload.request.SaleRequest;
 import org.example.quickclothapp.payload.request.WardRobeRequest;
@@ -17,6 +18,7 @@ import org.example.quickclothapp.service.intf.IWardRobeService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -226,14 +228,17 @@ public class WardRobeController {
             return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage(), null, null));
         }
     }
-    
-//    @GetMapping("/minimum_stocks/get")
-//    public ResponseEntity<?> getMinimumStocks(@RequestParam UUID wardrobeUuid) {
-//        try {
-//            return ResponseEntity.ok(wardRopeService.getMinimumStocks(wardrobeUuid));
-//        } catch (DataServiceException e) {
-//            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage(), null, null));
-//        }
-//    }
+
+    @Operation(summary = "Crea los umbrales de stock minimos", description = "Crea los umbrales de stock minimos para un ropero")
+    @ApiResponse(responseCode = "200", description = "Lista de los umbrales minimos creados", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ListCreateMinimumStockResponse.class))})
+    @ApiResponse(responseCode = "400", description = "El valor mensaje retorna el mensaje de error", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = MessageResponse.class))})
+    @PostMapping("/inventory/minimum_stocks/save")
+    public ResponseEntity<?> getMinimumStocks(@RequestBody List<CreateMinimumStockRequest> minimumStocksRequest) {
+        try {
+            return ResponseEntity.ok(wardRopeService.saveMinimumStocks(minimumStocksRequest));
+        } catch (DataServiceException e) {
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage(), null, null));
+        }
+    }
 
 }

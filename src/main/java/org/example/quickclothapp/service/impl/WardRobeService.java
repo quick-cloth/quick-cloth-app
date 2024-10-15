@@ -660,4 +660,9 @@ public class WardRobeService implements IWardRobeService {
         return (int) ((totalValue/AMOUNT_PER_POINT) * POINTS_PER_1000);
     }
 
+    @Override
+    public List<CreateMinimumStockResponse> saveMinimumStocks(List<CreateMinimumStockRequest> minimumStocksRequest) throws DataServiceException {
+        return wardRopeDataService.saveMinimumStocks(minimumStocksRequest);
+    }
+
 }
