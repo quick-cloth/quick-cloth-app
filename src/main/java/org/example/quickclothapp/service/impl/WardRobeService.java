@@ -382,7 +382,7 @@ public class WardRobeService implements IWardRobeService {
 
         return WardRobeResponse.builder()
                 .uuid(wardRope.getUuid())
-                .city(wardRope.getCity().getName())
+                .city(wardRope.getCity())
                 .name(wardRope.getName())
                 .address(wardRope.getAddress())
                 .valueSales(String.valueOf(totalSales))
@@ -483,7 +483,7 @@ public class WardRobeService implements IWardRobeService {
                     .address(wr.getAddress())
                     .stock(totalStock)
                     .valueSales(String.valueOf(totalSales))
-                    .city(wr.getCity().getName())
+                    .city(wr.getCity())
                     .build();
 
             wardRobeResponses.add(wrr);

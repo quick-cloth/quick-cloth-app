@@ -1,6 +1,7 @@
 package org.example.quickclothapp.payload.response;
 
 import lombok.*;
+import org.example.quickclothapp.model.City;
 
 import java.util.UUID;
 
@@ -15,6 +16,6 @@ public class WardRobeResponse {
     private String address;
     private Integer stock;
     private String valueSales;
-    private String city;
+    private City city;
     private Integer unitSold;
 }
