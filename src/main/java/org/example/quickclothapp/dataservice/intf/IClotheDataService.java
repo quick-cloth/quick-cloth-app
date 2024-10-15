@@ -19,4 +19,5 @@ public interface IClotheDataService {
     List<TypeClothe> findAllTypeClothe() throws DataServiceException;
     Clothe findClotheByAllTypes(UUID typeClotheUuid, UUID typeGenderUuid, UUID typeStageUuid) throws DataServiceException;
     Clothe saveClothe(Clothe build) throws DataServiceException;
+    List<Clothe> findByUuids(List<UUID> clotheUuids) throws DataServiceException;
 }

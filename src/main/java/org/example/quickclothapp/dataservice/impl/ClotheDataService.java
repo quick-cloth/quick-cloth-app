@@ -16,6 +16,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -161,4 +162,18 @@ public class ClotheDataService implements IClotheDataService {
             throw new DataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
         }
     }
+
+    @Override
+    public List<Clothe> findByUuids(List<UUID> clotheUuids) throws DataServiceException {
+        try {
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(apiServerUrl + "clothe/get/from_uuids")
+                    .queryParam("uuids", clotheUuids);
+
+            return List.of(Objects.requireNonNull(restTemplate.getForObject(builder.toUriString(), Clothe[].class)));
+        }
+        catch (HttpClientErrorException e){
+            throw new DataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
+        }
+    }
+
 }
