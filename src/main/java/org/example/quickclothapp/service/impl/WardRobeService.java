@@ -617,7 +617,7 @@ public class WardRobeService implements IWardRobeService {
                     .genderName(ol.getClothe().getTypeGender().getName())
                     .stageName(ol.getClothe().getTypeStage().getName())
                     .orderValue(ol.getValue_order())
-                    .deliveryValue(ol.getDelivery_value())
+                    .deliveryValue(ol.getDelivery_value() != null ? ol.getDelivery_value() : 0)
                     .build();
             orderListResponses.add(olr);
         }
@@ -644,8 +644,8 @@ public class WardRobeService implements IWardRobeService {
                     OrderResponseWardRobe.builder()
                             .uuid(o.getUuid())
                             .orderValue(orderList.stream().mapToInt(OrderList::getValue_order).sum())
-                            .deliveryValue(orderList.stream().mapToInt(OrderList::getDelivery_value).sum())
                             .orderDate(o.getOrder_date())
+                            .deliveryValue(orderList.stream().mapToInt(order -> Optional.ofNullable(order.getDelivery_value()).orElse(0)).sum())
                             .orderState(o.getOrderState().getName())
                             .build()
             );
