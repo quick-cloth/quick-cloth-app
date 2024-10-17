@@ -13,6 +13,7 @@ import java.util.UUID;
 @Builder
 public class OrderResponseWardRobe {
     private UUID uuid;
+    private UUID wardrobeUuid;
     private LocalDate orderDate;
     private String orderState;
     private Integer orderValue;

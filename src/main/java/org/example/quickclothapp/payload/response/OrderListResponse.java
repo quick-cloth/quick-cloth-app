@@ -1,6 +1,7 @@
 package org.example.quickclothapp.payload.response;
 
 import lombok.*;
+import org.example.quickclothapp.model.Clothe;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -8,9 +9,7 @@ import lombok.*;
 @Setter
 @Builder
 public class OrderListResponse {
-    private String clotheName;
-    private String genderName;
-    private String stageName;
+    private Clothe clothe;
     private Integer orderValue;
     private Integer deliveryValue;
 }

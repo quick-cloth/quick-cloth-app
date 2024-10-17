@@ -613,9 +613,7 @@ public class WardRobeService implements IWardRobeService {
 
         for (OrderList ol : orderLists){
             OrderListResponse olr = OrderListResponse.builder()
-                    .clotheName(ol.getClothe().getTypeClothe().getName())
-                    .genderName(ol.getClothe().getTypeGender().getName())
-                    .stageName(ol.getClothe().getTypeStage().getName())
+                    .clothe(ol.getClothe())
                     .orderValue(ol.getValue_order())
                     .deliveryValue(ol.getDelivery_value() != null ? ol.getDelivery_value() : 0)
                     .build();
@@ -624,6 +622,7 @@ public class WardRobeService implements IWardRobeService {
 
         return OrderResponseWardRobe.builder()
                 .uuid(order.getUuid())
+                .wardrobeUuid(order.getWardrobe().getUuid())
                 .orderValue(orderListResponses.stream().mapToInt(OrderListResponse::getOrderValue).sum())
                 .deliveryValue(orderListResponses.stream().mapToInt(OrderListResponse::getDeliveryValue).sum())
                 .orderDate(order.getOrder_date())
