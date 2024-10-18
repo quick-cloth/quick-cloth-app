@@ -9,6 +9,7 @@ import org.example.quickclothapp.payload.request.SaleRequest;
 import org.example.quickclothapp.payload.request.WardRobeRequest;
 import org.example.quickclothapp.payload.response.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,7 +31,7 @@ public interface IWardRobeService {
     OrderResponseWardRobe findOrderByUuid(UUID orderUuid) throws DataServiceException;
     List<OrderResponseWardRobe> findOrdersByWardRopeUuid(UUID wardRobeUuid) throws DataServiceException;
     Clothe findInventoryByClotheUuid(UUID typeClotheUuid, UUID typeGenderUuid, UUID typeStageUuid, UUID wardRopeUuid) throws DataServiceException;
-    List<TopSellingClothes> getTopSellingClothes(UUID wardrobeUuid) throws DataServiceException;
+    List<TopSellingClothes> getTopSellingClothes(UUID wardrobeUuid, LocalDate startDate, LocalDate endDate) throws DataServiceException;
     int calculatePoints(double totalValue);
     List<CreateMinimumStockResponse> saveMinimumStocks(List<CreateMinimumStockRequest> minimumStocksRequest) throws DataServiceException;
 }

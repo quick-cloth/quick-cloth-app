@@ -18,6 +18,7 @@ import org.example.quickclothapp.service.intf.IWardRobeService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -221,9 +222,9 @@ public class WardRobeController {
     @ApiResponse(responseCode = "200", description = "La lista de tipos de estado de orden", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = TopSellingClothes.class))})
     @ApiResponse(responseCode = "400", description = "El valor mensaje retorna el mensaje de error", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = MessageResponse.class))})
     @GetMapping("/top_selling_clothes")
-    public ResponseEntity<?> getTopSellingClothes(@RequestParam UUID wardrobeUuid) {
+    public ResponseEntity<?> getTopSellingClothes(@RequestParam UUID wardrobeUuid, @RequestParam(required = false) LocalDate startDate, @RequestParam(required = false) LocalDate endDate) {
         try {
-            return ResponseEntity.ok(wardRopeService.getTopSellingClothes(wardrobeUuid));
+            return ResponseEntity.ok(wardRopeService.getTopSellingClothes(wardrobeUuid, startDate, endDate));
         } catch (DataServiceException e) {
             return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage(), null, null));
         }

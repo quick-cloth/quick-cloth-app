@@ -672,9 +672,9 @@ public class WardRobeService implements IWardRobeService {
 
 
     @Override
-    public List<TopSellingClothes> getTopSellingClothes(UUID wardrobeUuid) throws DataServiceException {
+    public List<TopSellingClothes> getTopSellingClothes(UUID wardrobeUuid, LocalDate startDate, LocalDate endDate) throws DataServiceException {
 
-        return wardRopeDataService.getTopSellingClothes(wardrobeUuid);
+        return wardRopeDataService.getTopSellingClothes(wardrobeUuid, startDate, endDate);
     }
     
     public int calculatePoints(double totalValue){

@@ -16,6 +16,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -279,7 +280,7 @@ public class WardRobeDataService implements IWardRopeDataService {
     }
 
     @Override
-    public List<TopSellingClothes> getTopSellingClothes(UUID wardrobeUuid) throws DataServiceException {
+    public List<TopSellingClothes> getTopSellingClothes(UUID wardrobeUuid, LocalDate startDate, LocalDate endDate) throws DataServiceException {
 
         try {
             HttpHeaders headers = new HttpHeaders();
@@ -289,6 +290,15 @@ public class WardRobeDataService implements IWardRopeDataService {
 
             UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(apiServerUrl + "ward_rope/top_selling_clothes")
                     .queryParam("wardRobeUuid", wardrobeUuid);
+
+            if (startDate != null) {
+                builder.queryParam("startDate", startDate);
+            }
+
+            if (endDate != null) {
+                builder.queryParam("endDate", endDate);
+            }
+
 
             ResponseEntity<List<TopSellingClothes>> responseEntity = restTemplate.exchange(
                     builder.toUriString(),
