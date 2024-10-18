@@ -13,5 +13,6 @@ public class SaleResponse {
     private Double totalValue;
     private List<SaleListResponse> saleList;
     private Double payPointsValue;
+    private int newPoints;
     private int points;
 }

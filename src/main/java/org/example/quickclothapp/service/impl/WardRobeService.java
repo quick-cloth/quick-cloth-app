@@ -165,6 +165,8 @@ public class WardRobeService implements IWardRobeService {
         double payPointsValue = 0.0;
         int valuePoints = 0;
 
+        int newPoints = 0;
+
         if (payPoints) {
             valuePoints = (int) ((totalValue/AMOUNT_PER_POINT) * POINTS_PER_1000);
 
@@ -177,13 +179,15 @@ public class WardRobeService implements IWardRobeService {
                 totalValue = totalValue - (double) (valuePoints * AMOUNT_PER_POINT) / POINTS_PER_1000;;
             }
         }else{
-            int newPoints = (int) ((totalValue/AMOUNT_PER_POINT) * POINTS_PER_1000);
+            newPoints = (int) ((totalValue/AMOUNT_PER_POINT) * POINTS_PER_1000);
             user.setPoints(user.getPoints() + newPoints);
         }
+
 
         return SaleResponse.builder()
                 .totalValue(totalValue)
                 .saleList(saleListResponses)
+                .newPoints(newPoints)
                 .payPointsValue(payPointsValue * -1)
                 .points(user.getPoints())
                 .build();
