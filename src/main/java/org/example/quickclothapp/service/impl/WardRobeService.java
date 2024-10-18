@@ -33,7 +33,7 @@ public class WardRobeService implements IWardRobeService {
     private final IClotheService clotheService;
     private final IEmailService emailService;
     private static final int AMOUNT_PER_POINT = 1000;
-    private static final int POINTS_PER_1000 = 4;
+    private static final int POINTS_PER_1000 = 1;
     private static final int MINIMUM_POINTS = 80;
     @Value("${api-server-order-state-received}")
     private String orderStateReceived;
@@ -301,6 +301,8 @@ public class WardRobeService implements IWardRobeService {
         int usedPoints = 0;
         newSale.setValue(BigInteger.valueOf((long) totalValue));
 
+        int newPoints = 0;
+
         if (payPoints) {
 
             valuePoints = (int) ((totalValue/AMOUNT_PER_POINT) * POINTS_PER_1000);
@@ -318,7 +320,7 @@ public class WardRobeService implements IWardRobeService {
             }
         }
         else {
-            int newPoints = (int) ((totalValue/AMOUNT_PER_POINT) * POINTS_PER_1000);
+            newPoints = (int) ((totalValue/AMOUNT_PER_POINT) * POINTS_PER_1000);
             user.setPoints(user.getPoints() + newPoints);
         }
 
