@@ -278,7 +278,21 @@ public class WardRobeService implements IWardRobeService {
             }
         }
 
-        double totalValue = saleLists.stream().mapToDouble(SaleList::getValue).sum();
+//        double totalValue = saleLists.stream().mapToDouble(SaleList::getValue).sum();
+
+        double totalValue = 0.0;
+
+
+
+        for (SaleList slr : saleLists) {
+
+            totalValue += slr.getValue();
+
+            for (CampaignResponse cr : campaignResponses) {
+                totalValue += cr.getValueDiscount();
+            }
+        }
+
         int valuePoints = 0;
         int usedPoints = 0;
         newSale.setValue(BigInteger.valueOf((long) totalValue));
@@ -339,7 +353,7 @@ public class WardRobeService implements IWardRobeService {
 
     private void calculateDiscountSale(SaleList slr, Campaign c, List<CampaignResponse> campaignResponses) {
         double discount = (double) (slr.getValue() * c.getDiscount()) / 100;
-        slr.setValue((int) (slr.getValue() - discount));
+//        slr.setValue((int) (slr.getValue() - discount));
 
         CampaignResponse cr = CampaignResponse.builder()
                 .campaignName(c.getName())
