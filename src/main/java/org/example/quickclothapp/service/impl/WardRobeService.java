@@ -149,7 +149,19 @@ public class WardRobeService implements IWardRobeService {
             }
         }
 
-        double totalValue = saleListResponses.stream().mapToDouble(SaleListResponse::getValue).sum();
+        double totalValue = 0.0;
+
+
+
+        for (SaleListResponse slr : saleListResponses) {
+
+            totalValue += slr.getValue();
+
+            for (CampaignResponse cr : slr.getCampaignList()) {
+                totalValue += cr.getValueDiscount();
+            }
+        }
+
         double payPointsValue = 0.0;
         int valuePoints = 0;
 
@@ -179,7 +191,7 @@ public class WardRobeService implements IWardRobeService {
 
     private void calculateDiscount(SaleListResponse slr, Campaign c) {
         double discount = (slr.getValue() * c.getDiscount()) / 100;
-        slr.setValue(slr.getValue() - discount);
+//        slr.setValue(slr.getValue() - discount);
 
         CampaignResponse cr = CampaignResponse.builder()
                 .campaignName(c.getName())
