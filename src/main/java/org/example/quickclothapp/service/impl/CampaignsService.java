@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class CampaignsService implements ICampaignsService {
@@ -22,5 +23,10 @@ public class CampaignsService implements ICampaignsService {
     @Override
     public List<Campaign> getActiveCampaigns() throws DataServiceException {
         return campaignsDataService.getActiveCampaigns();
+    }
+
+    @Override
+    public List<Campaign> getCampaignsForUser(UUID userUuid) throws DataServiceException {
+        return campaignsDataService.getCampaignsForUser(userUuid);
     }
 }

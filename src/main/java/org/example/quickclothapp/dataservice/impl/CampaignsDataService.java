@@ -12,6 +12,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class CampaignsDataService implements ICampaignsDataService {
@@ -33,6 +34,31 @@ public class CampaignsDataService implements ICampaignsDataService {
             HttpEntity<?> request = new HttpEntity<>(headers);
 
             UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(apiServerUrl + "campaigns/get_active");
+
+            ResponseEntity<List<Campaign>> responseEntity = restTemplate.exchange(
+                    builder.toUriString(),
+                    HttpMethod.GET,
+                    request,
+                    new ParameterizedTypeReference<List<Campaign>>() {}
+            );
+
+            return responseEntity.getBody();
+        }
+        catch (HttpClientErrorException e){
+            throw new DataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
+        }
+    }
+
+    @Override
+    public List<Campaign> getCampaignsForUser(UUID userUuid) throws DataServiceException {
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+
+            HttpEntity<?> request = new HttpEntity<>(headers);
+
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(apiServerUrl + "campaigns/get_for_user")
+                    .queryParam("userUuid", userUuid);
 
             ResponseEntity<List<Campaign>> responseEntity = restTemplate.exchange(
                     builder.toUriString(),
