@@ -14,6 +14,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -260,12 +261,20 @@ public class UserDataService implements IUserDataService {
     }
 
     @Override
-    public List<SalesByUserResponse> findSalesByUser(UUID userUuid) throws DataServiceException {
+    public List<SalesByUserResponse> findSalesByUser(UUID userUuid, LocalDate startDate, LocalDate endDate) throws DataServiceException {
         
         try {
             UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(apiServerUrl + "user/sales/get")
                     .queryParam("userUuid", userUuid);
 
+            if (startDate != null) {
+                builder.queryParam("startDate", startDate);
+            }
+
+            if (endDate != null) {
+                builder.queryParam("endDate", endDate);
+            }
+            
             ResponseEntity<SalesByUserResponse[]> responseEntity = restTemplate.exchange(
                     builder.toUriString(),
                     HttpMethod.GET,

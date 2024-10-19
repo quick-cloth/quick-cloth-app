@@ -7,6 +7,7 @@ import org.example.quickclothapp.payload.request.FoundationEmployeeRequest;
 import org.example.quickclothapp.payload.request.WardrobeEmployeeRequest;
 import org.example.quickclothapp.payload.response.SalesByUserResponse;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,5 +27,5 @@ public interface IUserDataService {
     WardRobeEmployee findWarRobeEmployeeByUsername(String username) throws DataServiceException;
     BankEmployee findBankEmployeeByUsername(String username) throws DataServiceException;
     List<TypeDocument> findAllTypeDocument() throws DataServiceException;
-    List<SalesByUserResponse> findSalesByUser(UUID userUuid) throws DataServiceException;
+    List<SalesByUserResponse> findSalesByUser(UUID userUuid, LocalDate startDate, LocalDate endDate) throws DataServiceException;
 }

@@ -300,9 +300,9 @@ public class UserService implements IUserService, UserDetailsService {
     }
 
     @Override
-    public List<SalesByUserWithPointsResponse> findSalesByUser(UUID userUuid) throws DataServiceException {
+    public List<SalesByUserWithPointsResponse> findSalesByUser(UUID userUuid, LocalDate startDate, LocalDate endDate) throws DataServiceException {
         
-        List<SalesByUserResponse> salesWithOutPoints = userDataService.findSalesByUser(userUuid);
+        List<SalesByUserResponse> salesWithOutPoints = userDataService.findSalesByUser(userUuid, startDate, endDate);
        
         List<SalesByUserWithPointsResponse> salesWithPoints = new ArrayList<>();
         
