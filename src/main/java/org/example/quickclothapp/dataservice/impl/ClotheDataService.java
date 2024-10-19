@@ -9,6 +9,7 @@ import org.example.quickclothapp.model.TypeStage;
 import org.example.quickclothapp.payload.request.ClotheByAllTypesRequest;
 import org.example.quickclothapp.payload.request.ClotheRequest;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
@@ -166,10 +167,22 @@ public class ClotheDataService implements IClotheDataService {
     @Override
     public List<Clothe> findByUuids(List<UUID> clotheUuids) throws DataServiceException {
         try {
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+
+            HttpEntity<List<Clothe>> request = new HttpEntity<>(headers);
+
             UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(apiServerUrl + "clothe/get/from_uuids")
                     .queryParam("uuids", clotheUuids);
 
-            return List.of(Objects.requireNonNull(restTemplate.getForObject(builder.toUriString(), Clothe[].class)));
+            ResponseEntity<List<Clothe>> responseEntity = restTemplate.exchange(
+                    builder.toUriString(),
+                    HttpMethod.GET,
+                    request,
+                    new ParameterizedTypeReference<List<Clothe>>() {}
+            );
+            return List.of(restTemplate.getForObject(builder.toUriString(), Clothe[].class));
         }
         catch (HttpClientErrorException e){
             throw new DataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());

@@ -346,8 +346,10 @@ public class WardRobeDataService implements IWardRopeDataService {
             HttpEntity<?> request = new HttpEntity<>(headers);
 
             UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(apiServerUrl + "ward_rope/customers/get")
-                    .queryParam("wardrobeUuid", wardrobeUuid)
+                    .queryParam("wardRobeUuid", wardrobeUuid)
                     .queryParam("clotheUuids", clotheUuids);
+
+            System.out.println(builder.toUriString());
 
             ResponseEntity<List<CustomerResponse>> responseEntity = restTemplate.exchange(
                     builder.toUriString(),
