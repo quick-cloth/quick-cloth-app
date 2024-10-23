@@ -73,7 +73,9 @@ public class WardRobeService implements IWardRobeService {
     public SaleResponse checkValueSale(SaleRequest sale, boolean payPoints) throws DataServiceException, WardRopeServiceExpetion {
         Wardrobe wardRope = wardRopeDataService.findWardRopeByUuid(sale.getWardRopeUuid());
         List<Campaign> campaigns = clotheBankService.findCampaignsByClotheBankUuid(wardRope.getClotheBank().getUuid());
-        User user = userDataService.findUserByUuid(sale.getUserUuid());
+        
+        // Const for anonymous user 0a59d5bc-7291-46ad-a958-eac426f72ee9
+        User user = userDataService.findUserByUuid(sale.getUserUuid() != null ? sale.getUserUuid() : UUID.fromString("0a59d5bc-7291-46ad-a958-eac426f72ee9"));
 
         if (payPoints) {
             if (user.getPoints() < MINIMUM_POINTS) {
