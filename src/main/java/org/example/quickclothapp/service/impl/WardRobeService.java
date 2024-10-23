@@ -211,8 +211,10 @@ public class WardRobeService implements IWardRobeService {
     @Override
     public MessageResponse saveSale(SaleRequest saleRequest, boolean payPoints) throws DataServiceException {
         Wardrobe wardRope = wardRopeDataService.findWardRopeByUuid(saleRequest.getWardRopeUuid());
-        User user = userDataService.findUserByUuid(saleRequest.getUserUuid());
         List<Campaign> campaigns = clotheBankService.findCampaignsByClotheBankUuid(wardRope.getClotheBank().getUuid());
+
+        // Const for anonymous user 0a59d5bc-7291-46ad-a958-eac426f72ee9
+        User user = userDataService.findUserByUuid(saleRequest.getUserUuid() != null ? saleRequest.getUserUuid() : UUID.fromString("0a59d5bc-7291-46ad-a958-eac426f72ee9"));
 
         Sale newSale = Sale.builder()
                 .uuid(UUID.randomUUID())
