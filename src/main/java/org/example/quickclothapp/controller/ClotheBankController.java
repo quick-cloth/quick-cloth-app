@@ -127,4 +127,13 @@ public class ClotheBankController {
         }
     }
 
+    @GetMapping("/order/get")
+    public ResponseEntity<?> getOrder(@RequestParam UUID orderUuid) {
+        try {
+            return ResponseEntity.ok(clotheBankService.findOrderByUuid(orderUuid));
+        } catch (DataServiceException e) {
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage(), null, null));
+        }
+    }
+
 }
