@@ -125,6 +125,7 @@ public class ClotheBankService implements IClotheBankService {
                     .startDate(c.getCreation_date())
                     .endDate(c.getEnd_date())
                     .build();
+            cr.setDiscount(c.getDiscount());
             campaignResponses.add(cr);
         }
 
