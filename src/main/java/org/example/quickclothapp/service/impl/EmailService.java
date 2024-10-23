@@ -59,7 +59,7 @@ public class EmailService implements IEmailService {
     }
 
     @Override
-    public void sendEmailNewSale(Sale sale, List<SaleList> saleLists, EmailRequest emailRequest, List<CampaignResponse> campaignList) {
+    public void sendEmailNewSale(Sale sale, List<SaleList> saleLists, Integer newPoints ,EmailRequest emailRequest, List<CampaignResponse> campaignList) {
         try{
             MimeMessage mimeMessage = javaMailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage,true, "utf-8");
@@ -76,6 +76,7 @@ public class EmailService implements IEmailService {
             context.setVariable("totalDiscount", campaignList.stream().mapToDouble(CampaignResponse::getValueDiscount).sum());
             context.setVariable("totalValue", sale.getValue());
             context.setVariable("payPoints", sale.getPay_points() *-1);
+            context.setVariable("new_points", newPoints);
             context.setVariable("total_points", sale.getUser().getPoints());
 
             String html = templateEngine.process("sale-receipt-template", context);

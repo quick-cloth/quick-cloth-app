@@ -338,19 +338,19 @@ public class WardRobeService implements IWardRobeService {
 
         wardRopeDataService.saveSale(sdr);
 
-        sendEmailNewSale(newSale, saleLists, campaignResponses);
+        sendEmailNewSale(newSale, saleLists, newPoints,campaignResponses);
 
         return new MessageResponse("Sale saved successfully", null, newSale.getUuid());
 
     }
 
     @Async
-    public void sendEmailNewSale(Sale sale, List<SaleList> saleLists, List<CampaignResponse> campaignResponses) throws DataServiceException {
+    public void sendEmailNewSale(Sale sale, List<SaleList> saleLists, Integer newPoints,List<CampaignResponse> campaignResponses) throws DataServiceException {
         EmailRequest emailRequest = EmailRequest.builder()
                 .to(sale.getUser().getEmail())
                 .subject("Venta realizada")
                 .build();
-        emailService.sendEmailNewSale(sale, saleLists, emailRequest, campaignResponses);
+        emailService.sendEmailNewSale(sale, saleLists, newPoints,emailRequest, campaignResponses);
 
         SendEmail sendEmail = SendEmail.builder()
                 .uuid(UUID.randomUUID())
