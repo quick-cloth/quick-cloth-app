@@ -40,6 +40,18 @@ public class CampaignsController {
             return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage(), null, null));
         }
     }
+    
+    @Operation(summary = "Elimina una campaña", description = "Elimina una campaña dado el uuid de la campaña")
+    @DeleteMapping("/campaign/{campaignUuid}")
+    public ResponseEntity<?> deleteCampaign(@PathVariable UUID campaignUuid) {
+        try {
+            campaignsService.deleteCampaign(campaignUuid);
+            return ResponseEntity.noContent().build();
+        } catch (DataServiceException e) {
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage(), e.getStatusCode(), null));
+        }
+
+    }
 
     @Operation(summary = "Obtiene toda las campañas activas de posible interes para el usuario", description = "Obtiene todas las campañas activas de posible interes para el usuario")
     @ApiResponse(responseCode = "200", description = "Lista de todas las campañas activas en el momento", content = {@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Campaign.class)))})

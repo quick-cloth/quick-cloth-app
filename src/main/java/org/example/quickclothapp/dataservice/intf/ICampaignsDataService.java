@@ -9,4 +9,5 @@ import java.util.UUID;
 public interface ICampaignsDataService {
     List<Campaign> getActiveCampaigns() throws DataServiceException;
     List<Campaign> getCampaignsForUser(UUID userUuid) throws DataServiceException;
+    void deleteCampaign(UUID campaignUuid) throws DataServiceException;
 }

@@ -73,4 +73,26 @@ public class CampaignsDataService implements ICampaignsDataService {
             throw new DataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
         }
     }
+
+    @Override
+    public void deleteCampaign(UUID campaignUuid) throws DataServiceException {
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+
+            HttpEntity<?> request = new HttpEntity<>(headers);
+
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(apiServerUrl + "campaigns/campaign/" + campaignUuid);
+
+            restTemplate.exchange(
+                    builder.toUriString(),
+                    HttpMethod.DELETE,
+                    request,
+                    new ParameterizedTypeReference<Void>() {}
+            );
+        }
+        catch (HttpClientErrorException e){
+            throw new DataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
+        }
+    }
 }

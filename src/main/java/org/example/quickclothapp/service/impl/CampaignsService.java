@@ -29,4 +29,11 @@ public class CampaignsService implements ICampaignsService {
     public List<Campaign> getCampaignsForUser(UUID userUuid) throws DataServiceException {
         return campaignsDataService.getCampaignsForUser(userUuid);
     }
+
+    @Override
+    public void deleteCampaign(UUID campaignUuid) throws DataServiceException {
+        campaignsDataService.deleteCampaign(campaignUuid);
+    }
+
+
 }
