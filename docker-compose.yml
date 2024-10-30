@@ -1,0 +1,16 @@
+services:
+  data-service:
+    container_name: quick-cloth-data
+    image: quick-cloth-data:latest
+    ports:
+      - "8080:8080"
+
+  application-service:
+    container_name: quick-cloth-app
+    image: quick-cloth-app:latest
+    ports:
+      - "8081:8081"
+    environment:
+      - DATA_URL=http://data-service:8080
+    depends_on:
+      - data-service
